@@ -1,0 +1,1244 @@
+/* ==========================================================================
+   Книга года — стили
+   Одна колонка «листов»: каждый лист = страница печатной книги.
+   Цвет этапа задаётся на листе классом .stage-*, как в книге.
+   ========================================================================== */
+
+/* ---------- Токены ---------- */
+:root {
+  --ground: #f0f1ec;
+  --paper: #ffffff;
+  --block: #eef0ea;
+  --soft: #d9dcd3;
+  --ink: #000000;      /* текст книги — чёрный */
+  --text: #3a4a3d;
+  --rule: #b9bdb2;
+  --dot: #a9b0a3;
+  --on-accent: #ffffff;
+  --c: #2e8560;
+
+  --font-display: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-book: "Book Gothic", "Century Gothic", "URW Gothic", "Avant Garde", "Montserrat", sans-serif;  /* шрифт книги */
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #0d120e;
+    --paper: #151d16;
+    --block: #1d271f;
+    --soft: #2a372c;
+    --ink: #eef3ea;
+    --text: #bccbbd;
+    --rule: #46564a;
+    --dot: #5b6c5f;
+    --on-accent: #0d120e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #0d120e;
+  --paper: #151d16;
+  --block: #1d271f;
+  --soft: #2a372c;
+  --ink: #eef3ea;
+  --text: #bccbbd;
+  --rule: #46564a;
+  --dot: #5b6c5f;
+  --on-accent: #0d120e;
+  color-scheme: dark;
+}
+
+/* ---------- Цвета этапов (как в книге) ---------- */
+.stage-intro    { --c: #2e8560; --bg-c: #1b6fe0; } /* вступление (обложка и стр. 0–2); --bg-c — синий картины обложки для фона за листами */
+.stage-finance  { --c: #2e8560; --bg-c: #2fc278; } /* stage 1 — Финансовый итог */
+.stage-shown    { --c: #2d3e66; --bg-c: #3d6fe0; } /* stage 2 — Проявленный итог; --bg-c — чистый синий для фона за листами (без серости) */
+.stage-personal { --c: #9b4558; --bg-c: #d6478b; } /* stage 3 — Личный итог; --bg-c — чистый ягодный для фона */
+.stage-tree1    { --c: #e2531f; --bg-c: #ff6a3d; } /* stage 4 — Древо желаний, день 1; --bg-c — чистый оранжевый для фона */
+.stage-tree2    { --c: #774c75; --bg-c: #b05cc0; } /* stage 5 — Древо желаний, день 2 (сливовый, как в книге) */
+.stage-tree3    { --c: #3fa3bf; --bg-c: #36b9df; } /* stage 6 — Древо желаний, день 3 (бирюзовый, как в книге) */
+.stage-material { --c: #399d64; --bg-c: #2fc278; } /* stage 7 — Самый материальный день (зелёный, как в книге) */
+.stage-launch   { --c: #9a0700; --bg-c: #e0342a; } /* stage 8 — Запуск Древа (тёмно-красный, как в книге) */
+.stage-extra1   { --c: #485f71; --bg-c: #5f87a8; } /* доп. материал №1 — Сефироты (сине-серый, как в книге) */
+.stage-extra2   { --c: #8c422c; --bg-c: #d0673f; } /* доп. материал №2 — перепросмотр (терракотовый) */
+.stage-extra3   { --c: #db19ff; --bg-c: #d84cf5; } /* доп. материал №3 — радикальное прощение (фуксия) */
+.stage-extra4   { --c: #bc1235; --bg-c: #e0405f; } /* доп. материал №4 — ревизия пространства (малиновый) */
+.stage-notes    { --c: #25ac39; --bg-c: #2fc278; } /* заметки (зелёный, как в книге) */
+/* акцент; в тёмной теме — светлее */
+.chip, .intro, .sheet { --acc: var(--c); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) :is(.chip, .sheet) { --acc: color-mix(in srgb, var(--c) 55%, #ffffff); }
+}
+:root[data-theme="dark"] :is(.chip, .sheet) { --acc: color-mix(in srgb, var(--c) 55%, #ffffff); }
+
+/* Плавная смена цвета шапки при переходе между разделами: цвета раздела (--bar-c — фон,
+   --bar-ink — надпись, закладка, полоска) объявлены как цвета и перетекают за 0,45 с,
+   поэтому плавно меняются и градиенты закладки/полоски, а не только фон */
+@property --bar-c   { syntax: "<color>"; inherits: true; initial-value: #2fc278; }
+@property --bar-ink { syntax: "<color>"; inherits: true; initial-value: #2e8560; }
+:root { transition: --bar-c .45s ease-in-out, --bar-ink .45s ease-in-out; }
+/* ---------- База ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: 112px; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--text);
+  font: 400 16px/1.55 var(--font-body);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 2px solid var(--acc, var(--c)); outline-offset: 2px; border-radius: 3px; }
+
+.wrap {
+  max-width: 860px;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- Верхняя панель ---------- */
+.bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  /* фон шапки — оттенок текущего этапа, как фон за листами; --bar-c ставит js/main.js,
+     смена этапа — плавный перелив */
+  background-color: color-mix(in oklab, var(--bar-c, #2fc278) var(--tint-k, 20%), var(--ground));
+  border-bottom: 0;   /* без нижней линии */
+  box-shadow: inset 0 -6px 8px -6px rgba(0, 0, 0, .12);   /* лёгкая тень внутри панели у нижнего края */
+  transition: background-color .45s ease-in-out;   /* фон панели при переходе обложка ↔ разделы */
+}
+/* глава «Начало»: градиент из синих картины обложки (замерены по img/cover-bg.jpg),
+   золотые надпись и выбранный чип; уход в другой этап — плавное растворение */
+.bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, #13243a 0%, #152b46 40%, #0e4973 78%, #326887 100%);
+  opacity: 0;
+  transition: opacity .45s ease-in-out;
+  pointer-events: none;
+}
+.bar.is-cover::before { opacity: 1; }
+/* пока под панелью картина обложки — панель почти прозрачная (видно небо);
+   дальше (стр. 0–2 и все разделы) — как прежде, сплошная. Класс .over-cover ставит js/main.js */
+.bar.is-cover.over-cover::before { opacity: .06; }
+.bar.over-cover {
+  background-color: transparent;
+  -webkit-backdrop-filter: blur(1px);
+          backdrop-filter: blur(1px);
+}
+
+.bar-title { }
+
+/* тонкая золотая полоска по нижнему краю панели: начинается слева над закладкой
+   и сходит на нет примерно к середине списка разделов */
+.bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: min(48vw, 360px);
+  height: 1.5px;
+  /* цвет — цвет текущего раздела (--bar-ink ставит js/main.js); на обложке — золото */
+  --line-c: var(--bar-ink, var(--c));
+  background: linear-gradient(90deg, var(--line-c) 0%, var(--line-c) 22%, color-mix(in srgb, var(--line-c) 55%, transparent) 60%, transparent 100%);
+  pointer-events: none;
+
+}
+.bar.is-cover::after { --line-c: #e6bb5a; }
+
+/* Закладка-ленточка под панелью слева: прячет панель (стрелка вверх) и вытягивает обратно
+   (стрелка вниз). Панель уезжает вверх, закладка едет вместе с ней и остаётся видна. */
+.bar { transition: transform .45s cubic-bezier(.4, 0, .2, 1), background-color .45s ease-in-out; }   /* цвет раздела перетекает через --bar-c (см. @property) */
+.bar.is-hidden { transform: translateY(calc(-100% - 3px)); border-bottom-color: transparent; }   /* без светлой линии у верхнего края */
+/* Когда панель спрятана, над обложкой остаётся полоса её высоты. Заполняем её переходом:
+   тёмно-синий верх картины плавно растворяется вверх в фон страницы (как внизу обложки).
+   Фон прокручивается вместе со страницей, поэтому виден только над обложкой. */
+html {
+  --top-from: #0a1729;                 /* цвет верха картины под затемнением (замерен по краю обложки) */
+  /* полоса — тот же ночной синий, что верх картины, с россыпью звёзд (случайные точки разного размера,
+     картинка 420 × 74 повторяется по ширине) */
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='74'%3E%3Ccircle cx='161' cy='63' r='0.82' fill='%23ffffff' fill-opacity='0.71'/%3E%3Ccircle cx='284' cy='5' r='1.64' fill='%23fff6dc' fill-opacity='0.95'/%3E%3Ccircle cx='359.1' cy='33.4' r='1.48' fill='%23fff6dc' fill-opacity='0.95'/%3E%3Ccircle cx='46.7' cy='63.7' r='0.73' fill='%23ffffff' fill-opacity='0.45'/%3E%3Ccircle cx='364' cy='3.8' r='1.03' fill='%23ffffff' fill-opacity='0.65'/%3E%3Ccircle cx='200.8' cy='29' r='0.78' fill='%23ffffff' fill-opacity='0.36'/%3E%3Ccircle cx='201.7' cy='52.3' r='0.92' fill='%23ffffff' fill-opacity='0.63'/%3E%3Ccircle cx='68.9' cy='8.1' r='0.74' fill='%23ffffff' fill-opacity='0.4'/%3E%3Ccircle cx='227.6' cy='67.2' r='1.06' fill='%23ffffff' fill-opacity='0.64'/%3E%3Ccircle cx='27.6' cy='43.8' r='1.59' fill='%23fff6dc' fill-opacity='0.95'/%3E%3Ccircle cx='238.1' cy='60.1' r='0.53' fill='%23ffffff' fill-opacity='0.61'/%3E%3Ccircle cx='297' cy='66' r='0.74' fill='%23ffffff' fill-opacity='0.56'/%3E%3Ccircle cx='76.8' cy='48.6' r='0.7' fill='%23ffffff' fill-opacity='0.36'/%3E%3Ccircle cx='198.9' cy='10.7' r='0.5' fill='%23ffffff' fill-opacity='0.6'/%3E%3Ccircle cx='117.9' cy='3.7' r='1.03' fill='%23ffffff' fill-opacity='0.8'/%3E%3Ccircle cx='333.2' cy='67.4' r='0.48' fill='%23ffffff' fill-opacity='0.48'/%3E%3Ccircle cx='45.9' cy='63.6' r='0.56' fill='%23ffffff' fill-opacity='0.47'/%3E%3Ccircle cx='81.6' cy='25.4' r='0.76' fill='%23ffffff' fill-opacity='0.53'/%3E%3Ccircle cx='83.2' cy='41.7' r='0.58' fill='%23ffffff' fill-opacity='0.54'/%3E%3Ccircle cx='203.8' cy='16.3' r='0.75' fill='%23ffffff' fill-opacity='0.41'/%3E%3Ccircle cx='419.6' cy='70.7' r='0.5' fill='%23ffffff' fill-opacity='0.48'/%3E%3Ccircle cx='227.9' cy='3.1' r='0.65' fill='%23ffffff' fill-opacity='0.37'/%3E%3Ccircle cx='324.5' cy='55.8' r='0.58' fill='%23ffffff' fill-opacity='0.53'/%3E%3Ccircle cx='127.1' cy='18.8' r='0.57' fill='%23ffffff' fill-opacity='0.6'/%3E%3Ccircle cx='58.7' cy='46.1' r='0.65' fill='%23ffffff' fill-opacity='0.54'/%3E%3Ccircle cx='299.6' cy='54.9' r='0.77' fill='%23ffffff' fill-opacity='0.4'/%3E%3Ccircle cx='247.5' cy='52.8' r='0.76' fill='%23ffffff' fill-opacity='0.48'/%3E%3Ccircle cx='53.5' cy='32.4' r='0.76' fill='%23ffffff' fill-opacity='0.6'/%3E%3Ccircle cx='75.2' cy='55.2' r='1.63' fill='%23fff6dc' fill-opacity='0.95'/%3E%3Ccircle cx='343.4' cy='32.1' r='0.76' fill='%23ffffff' fill-opacity='0.58'/%3E%3Ccircle cx='144.2' cy='19.2' r='0.75' fill='%23ffffff' fill-opacity='0.36'/%3E%3Ccircle cx='19.8' cy='27.9' r='1.15' fill='%23ffffff' fill-opacity='0.76'/%3E%3Ccircle cx='304.4' cy='57.1' r='0.68' fill='%23ffffff' fill-opacity='0.47'/%3E%3Ccircle cx='206.1' cy='5.2' r='0.66' fill='%23ffffff' fill-opacity='0.63'/%3E%3Ccircle cx='193.1' cy='62.8' r='1.36' fill='%23fff6dc' fill-opacity='0.95'/%3E%3Ccircle cx='208' cy='47.1' r='0.7' fill='%23ffffff' fill-opacity='0.46'/%3E%3Ccircle cx='312.6' cy='15.5' r='1.14' fill='%23ffffff' fill-opacity='0.8'/%3E%3Ccircle cx='245.2' cy='66.6' r='0.75' fill='%23ffffff' fill-opacity='0.42'/%3E%3Ccircle cx='357.8' cy='7.1' r='0.64' fill='%23ffffff' fill-opacity='0.58'/%3E%3Ccircle cx='61.8' cy='5.9' r='0.49' fill='%23ffffff' fill-opacity='0.51'/%3E%3Ccircle cx='137.2' cy='56' r='1.48' fill='%23fff6dc' fill-opacity='0.95'/%3E%3Ccircle cx='402.7' cy='24.6' r='0.55' fill='%23ffffff' fill-opacity='0.36'/%3E%3Ccircle cx='157.4' cy='29.6' r='1.07' fill='%23ffffff' fill-opacity='0.73'/%3E%3Ccircle cx='58.7' cy='24.7' r='0.77' fill='%23ffffff' fill-opacity='0.62'/%3E%3Ccircle cx='26.1' cy='35.5' r='0.52' fill='%23ffffff' fill-opacity='0.42'/%3E%3Ccircle cx='318.8' cy='62.3' r='0.56' fill='%23ffffff' fill-opacity='0.4'/%3E%3C/svg%3E") top left / 420px 74px repeat-x,
+    /* низ полосы — ровно цвет верха обложки, чтобы не было шва */
+    linear-gradient(to bottom, rgba(10, 23, 41, 0) 35%, var(--top-from) 100%) top / 100% 74px no-repeat,
+    /* мягкие цветовые пятна — продолжение мазков картины (цвета замерены по верху img/cover-bg.jpg) */
+    radial-gradient(60% 140% at 82% 100%, rgba(14, 73, 115, .85), rgba(14, 73, 115, 0) 70%) top / 100% 74px no-repeat,
+    radial-gradient(38% 120% at 58% 110%, rgba(38, 86, 140, .45), rgba(38, 86, 140, 0) 70%) top / 100% 74px no-repeat,
+    radial-gradient(45% 130% at 18% 90%, rgba(26, 52, 86, .8), rgba(26, 52, 86, 0) 72%) top / 100% 74px no-repeat,
+    radial-gradient(30% 110% at 38% 0%, rgba(58, 44, 96, .35), rgba(58, 44, 96, 0) 70%) top / 100% 74px no-repeat,
+    radial-gradient(26% 120% at 96% 10%, rgba(50, 104, 135, .5), rgba(50, 104, 135, 0) 70%) top / 100% 74px no-repeat,
+    linear-gradient(var(--top-from), var(--top-from)) top / 100% 74px no-repeat,
+    var(--ground);
+}
+/* срезанный обложкой верх картины — в полосе над ней (размер и сдвиг ставит js/main.js,
+   чтобы картина продолжалась без шва); к верхнему краю растворяется в звёздное небо */
+.top-sky {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 74px;
+  z-index: 0;
+  pointer-events: none;
+  background: url("../img/cover-bg.jpg") no-repeat;
+  background-size: 0 0;
+  -webkit-mask: linear-gradient(to top, #000 40%, rgba(0, 0, 0, .6) 70%, transparent 100%);
+          mask: linear-gradient(to top, #000 40%, rgba(0, 0, 0, .6) 70%, transparent 100%);
+}
+.top-sky::after {                      /* то же затемнение, что у верха обложки */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 14, 32, .62);
+}
+body { background: transparent; }   /* фон страницы (и звёздная полоса) — на html: под уезжающей панелью сразу видно небо, без белой вспышки */
+.bar-tab {
+  position: absolute;
+  top: 100%;
+  left: max(16px, env(safe-area-inset-left, 0px));
+  width: 40px;
+  height: 80px;
+  margin-top: -1px;                     /* вплотную к нижней линии панели */
+  padding: 8px 0 18px;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  /* объёмная лента: градиент цвета раздела (светлее слева, темнее справа, как изгиб ткани) + тень */
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--bar-ink, var(--c)) 72%, #000000) 0%,
+    color-mix(in srgb, var(--bar-ink, var(--c)) 70%, #ffffff) 24%,
+    color-mix(in srgb, var(--bar-ink, var(--c)) 72%, #000000) 100%);
+  color: #ffffff;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);   /* книжная закладка с вырезом снизу */
+  cursor: pointer;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .18));
+  transition: height .25s ease, background-color .8s ease;
+}
+.bar-tab:hover, .bar-tab:focus-visible { height: 86px; outline: none; }   /* «потянуть» закладку */
+.bar-tab svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.4; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .25)); stroke-linecap: round; stroke-linejoin: round; transition: transform .45s ease; }
+.bar.is-hidden .bar-tab .tab-arrow { transform: rotate(180deg); }
+.bar-tab .tab-arrow { flex: none; }   /* стрелка не сжимается рядом с лотосом */
+/* лотос эмблемы на закладке (без надписи), цвета стрелки */
+.bar-tab .tab-lotus { flex: none; width: 32px; height: 22px; margin-top: 6px; fill: currentColor; stroke: currentColor; stroke-width: .45; opacity: 1; transform: none; }   /* тонкий контур утолщён, чтобы лотос читался в маленьком размере */
+.bar.is-cover .bar-tab {                      /* на обложке — золото, как «РАБОЧАЯ книга» */
+  background: linear-gradient(180deg, #b9842c 0%, #fbe9b0 24%, #b9842c 100%);
+  color: #2a1a05;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, .35));
+}
+@media (prefers-reduced-motion: reduce) { .bar, .bar-tab svg { transition: none; } }
+.bar.is-cover .bar-title { color: #efcf7f; }
+.bar.is-cover .chip {
+  color: rgba(235, 242, 250, .9);
+  border-color: rgba(255, 255, 255, .22);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .03) 55%, rgba(0, 0, 0, .12));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 3px rgba(0, 0, 0, .12);
+}
+/* «Начало» на обложке — золото, как заголовок «РАБОЧАЯ книга» */
+.bar.is-cover .chip[aria-current="true"] {
+  background: linear-gradient(180deg, #fbe9b0 0%, #e9bf5c 48%, #b9842c 100%);
+  border-color: #c99a3e;
+  color: #2a1a05;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 1px 6px rgba(3, 8, 26, .35);
+}
+.bar .wrap { display: flex; flex-direction: column; gap: 6px; padding-block: 8px; max-width: none; }   /* панель глав — по левому краю экрана */
+.bar-title { font: 600 .72rem var(--font-display); letter-spacing: .18em; color: var(--bar-ink, var(--c)); }   /* цвет текущего этапа (--bar-ink ставит js/main.js) */
+
+.chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-inline: -16px;
+  padding: 0 16px 2px;
+}
+.chips::-webkit-scrollbar { display: none; }
+/* Чип раздела: в свёрнутом виде только номер, у открытого раздела — номер и название
+   (название плавно раскрывается/сворачивается) */
+.chip {
+  flex: none;
+  height: 34px;
+  min-width: 34px;
+  padding: 0 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: padding .35s ease, color .8s ease, border-color .8s ease, background-color .8s ease;
+  border: 1px solid var(--rule);
+  border-radius: 17px;
+  color: var(--text);
+  font: 500 .76rem var(--font-display);
+  letter-spacing: .03em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+/* Объёмные чипы: мягкий градиент сверху вниз и световой блик по верхнему краю */
+.chip {
+  background: linear-gradient(180deg, color-mix(in srgb, #ffffff 70%, transparent), color-mix(in srgb, #ffffff 15%, transparent) 55%, color-mix(in srgb, #000000 5%, transparent));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 1px 3px rgba(0, 0, 0, .04);
+}
+/* открытый раздел: градиент цвета этапа + лёгкая тень вокруг (как у заголовка на обложке) */
+.chip[aria-current="true"] {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--acc) 72%, #ffffff), var(--acc) 50%, color-mix(in srgb, var(--acc) 78%, #000000));
+  border-color: color-mix(in srgb, var(--acc) 85%, #000000);
+  color: var(--on-accent);
+  padding: 0 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), 0 1px 5px color-mix(in srgb, var(--acc) 22%, rgba(0, 0, 0, .12));
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .25);
+}
+.chip-n { font-variant-numeric: tabular-nums; }
+
+.chip-t {
+  display: inline-block;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  vertical-align: bottom;
+  transition: max-width .45s ease, opacity .3s ease, margin .45s ease;
+}
+.chip[aria-current="true"] .chip-t { max-width: 18em; opacity: 1; margin-left: .45em; }
+.chip:hover .chip-t, .chip:focus-visible .chip-t { max-width: 18em; opacity: 1; margin-left: .45em; }   /* при наведении название видно и у свёрнутых */
+
+/* ---------- Обложка ---------- */
+/* Обложка на всю ширину: видео (ночная картина с кистью) + светлый текст, как на обложке книги.
+   Цвета тут фиксированные, не зависят от темы: фон всегда тёмный. */
+.intro {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: calc(100vh - 82px);
+  min-height: calc(100svh - 82px);
+  display: flex;
+  /* пока видео грузится — его же первый кадр (img/cover-start.jpg, снят с 8-й секунды): цвета и сюжет
+     совпадают с видео, подмены не видно; синий — только до загрузки этой картинки */
+  background: #0b1a33 url("../img/cover-start.jpg") 50% 28% / cover no-repeat;
+  color: #ffffff;
+  --acc: #ffffff;
+}
+.intro-video,
+.intro-still {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 28%;   /* картина чуть выше: ручка кисти не срезается сверху на широких экранах */
+  pointer-events: none;
+}
+/* Переход под обложкой: тёмно-синий низ картинки растворяется в фоне страницы.
+   Каждая точка — смесь синего с цветом фона (а не прозрачность), поэтому нет серого
+   оттенка; доли идут по плавной S-кривой, поэтому не видно ни начала, ни конца.
+   Первый лист заходит на градиент. */
+.intro-fade {
+  --fade-from: #0c1731;
+  --fade-to: color-mix(in oklab, #1b6fe0 var(--tint-k), var(--ground));   /* уходит в синий оттенок вступления */   /* уходит в оттенок первого этапа (см. .pages-bg) */
+  height: 380px;
+  margin-bottom: -340px;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    var(--fade-from) 0%,
+    color-mix(in oklab, var(--fade-from) 94%, var(--fade-to)) 8%,
+    color-mix(in oklab, var(--fade-from) 82%, var(--fade-to)) 18%,
+    color-mix(in oklab, var(--fade-from) 64%, var(--fade-to)) 30%,
+    color-mix(in oklab, var(--fade-from) 45%, var(--fade-to)) 43%,
+    color-mix(in oklab, var(--fade-from) 28%, var(--fade-to)) 56%,
+    color-mix(in oklab, var(--fade-from) 14%, var(--fade-to)) 69%,
+    color-mix(in oklab, var(--fade-from) 5%, var(--fade-to)) 83%,
+    var(--fade-to) 100%);
+}
+main.wrap { position: relative; z-index: 1; padding-bottom: 40px; }
+
+/* Вуалевый лотос эмблемы на цветном фоне за листами: большой, еле заметный, в тон текущему
+   разделу (--bar-c ставит js/main.js). Слева основание прижато к левой стенке, справа — к правой,
+   оба по центру экрана по высоте. Лежит над фоном, но под листами; над обложкой скрыт. */
+.lotus-veil {
+  --lw: min(85vh, 790px);                       /* ширина цветка */
+  --lh: calc(var(--lw) * 23.91 / 35.76);        /* его высота (пропорции эмблемы) */
+  position: fixed;
+  top: 50%;
+  z-index: -1;
+  width: var(--lw);
+  height: var(--lh);
+  transform-origin: 0 0;
+  color: color-mix(in srgb, var(--bar-c, #1b6fe0) 4%, transparent);   /* контуры лотоса рисуются currentColor; еле заметно */
+  pointer-events: none;
+  transition: color .8s ease, opacity .6s ease;
+}
+.lotus-l { left: 0;    transform: translate(calc(var(--lh) * .86), calc(var(--lw) / -2)) rotate(90deg); }    /* основание чуть заходит за край */
+.lotus-r { left: 100%; transform: translate(calc(-.86 * var(--lh)), calc(var(--lw) / 2)) rotate(-90deg); }
+body:has(.bar.over-cover) .lotus-veil { opacity: 0; }
+
+/* ---------- Фон за листами: оттенок цвета этапа, между этапами — плавный градиент ----------
+   Слой на всю ширину экрана под листами; градиент собирает js/main.js по реальным
+   позициям листов (зелёный этап → синий этап и т. д.). Начинается там, где кончается
+   переход от обложки (340px — нахлёст .intro-fade), тем же оттенком — без шва. */
+:root { --tint-k: 20%; }                                   /* насколько заметен оттенок этапа */
+:root[data-theme="dark"] { --tint-k: 24%; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --tint-k: 24%; } }
+body { overflow-x: clip; }                                 /* слой шириной 100vw не даёт горизонтальной прокрутки */
+.pages-bg {
+  position: absolute;
+  z-index: -1;
+  top: 340px;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  pointer-events: none;
+  background: color-mix(in oklab, #1b6fe0 var(--tint-k), var(--ground));
+}
+
+/* картинка лежит поверх видео и плавно проявляется классом .is-still
+   (когда видео доиграло или человек ушёл вниз) */
+.intro-still { opacity: 0; transition: opacity 1s ease; }
+.intro.is-still .intro-still { opacity: 1; }
+/* видео проявляется поверх картины, только когда реально пошло (без резкой подмены кадра) */
+.intro-video { opacity: 0; transition: opacity .8s ease; }
+.intro.video-on .intro-video { opacity: 1; }
+.intro::after {                   /* затемнение для читаемости текста */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  /* к самому низу — сплошной #0c1731, тем же цветом начинается .intro-fade: шва нет */
+  background: linear-gradient(180deg, rgba(6, 14, 32, .62) 0%, rgba(6, 14, 32, .28) 45%, rgba(10, 20, 44, .62) 82%, rgba(12, 23, 49, .9) 94%, #0c1731 100%);
+}
+.intro-in {
+  width: 100%;
+  padding-block: 36px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 18px;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, .35);
+}
+/* эмблема с первой страницы книги: векторная, зелёная (цвет этапа), в тёмной теме светлеет сама */
+.logo { display: block; width: clamp(110px, 28vw, 150px); height: auto; color: var(--acc); }
+
+/* Заголовок «РАБОЧАЯ книга» — контуры с первой страницы книги (в PDF шрифты переведены в кривые).
+   Как в книге: «РАБОЧАЯ» сплошным цветом, «книга» — тот же цвет светлее (~75%). */
+/* Цвет — золото с вертикальным переливом (градиент #gold описан в index.html), запасной — сплошное золото. */
+.cover-title { margin: 0; line-height: 0; color: #e6bb5a; }
+/* эмблема и «РАБОЧАЯ книга» чуть выше, поля имени и даты остаются на месте */
+.intro .logo, .intro .cover-title { position: relative; top: clamp(-40px, -4vh, -16px); }
+/* тень за буквами: плотная близкая (контур) + широкая тёмно-синяя (отделяет от картины) */
+.cover-title-art {
+  display: block; width: clamp(260px, 72vw, 520px); height: auto; overflow: visible;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .6)) drop-shadow(0 4px 16px rgba(3, 8, 26, .85)) drop-shadow(0 0 34px rgba(3, 8, 26, .55));
+}
+.cover-title-art g { fill: url(#gold) #e6bb5a; }
+.cover-title-art .t-scr { opacity: .85; }
+/* ---------- Подпись дневника: «Имя обладательницы» и «Период заполнения» ----------
+   Пустое поле — линия и подпись под ней. Пока человек пишет, за буквами появляется
+   закруглённая синяя плашка по ширине слова, буквы — золотым каллиграфическим шрифтом.
+   Заполнено и курсор ушёл — подпись и линия плавно гаснут; при наведении/касании плавно
+   возвращаются. Ширину плашки по тексту и класс .has-value ставит js/main.js. */
+.cover-fields { width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 0; margin-top: 10px; }
+.cover-fields label {
+  --fh: 66px;                                   /* высота поля (и фона за буквами) */
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 10px;
+  font-size: .95rem;
+  color: rgba(255, 255, 255, .85);
+  cursor: text;
+}
+.cover-fields label > span { transition: opacity .6s ease; }
+.cover-fields label::before {                   /* линия под полем */
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--fh) + 3px);
+  height: 2px;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, .55);
+  transition: opacity .6s ease, background-color .3s ease;
+}
+.cover-fields label:focus-within::before { background: #efcf7f; }
+.cover-fields label + label { margin-top: -12px; }   /* дата ближе к имени; расстояние от заголовка до имени прежнее */
+/* --pill-a — плотность синего фона за буквами; объявлена через @property, чтобы плавно анимироваться */
+@property --pill-a { syntax: "<number>"; inherits: false; initial-value: 0; }
+.cover-fields input {
+  --pill-a: 0;
+  width: 100%;
+  max-width: 100%;
+  height: var(--fh);
+  padding: 0 64px;                              /* запас по бокам — на плавный уход фона в картину */
+  border: 0;
+  border-radius: 0;
+  /* синяя полоса за буквами: без скруглений, слева и справа плавно уходит в никуда */
+  background: linear-gradient(to right,
+    rgba(31, 61, 134, 0) 0%,
+    rgba(31, 61, 134, calc(.4 * var(--pill-a))) 14%,
+    rgba(31, 61, 134, calc(.68 * var(--pill-a))) 30%,
+    rgba(31, 61, 134, calc(.68 * var(--pill-a))) 70%,
+    rgba(31, 61, 134, calc(.4 * var(--pill-a))) 86%,
+    rgba(31, 61, 134, 0) 100%) center / 100% 42px no-repeat;   /* полоса ниже поля (42 из 66px), по центру строки — не наезжает на подпись над датой */
+  color: #efcf7f;
+  caret-color: #efcf7f;
+  font: 400 clamp(30px, 6.5vw, 42px)/1 "Great Vibes", "Marck Script", cursive;
+  text-align: center;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .35);
+  transition: --pill-a .5s ease, width .25s ease;
+}
+.cover-fields input:focus { outline: none; }
+/* есть текст — проявляется синий фон за буквами */
+.cover-fields label.has-value input { --pill-a: 1; }
+/* заполнено и не в фокусе — подпись и линия гаснут; наведение или фокус — возвращаются */
+.cover-fields label.has-value:not(:focus-within):not(:hover) > span,
+.cover-fields label.has-value:not(:focus-within):not(:hover)::before { opacity: 0; }
+/* невидимый «замер» текста — по нему считается ширина плашки */
+.cover-measure {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  white-space: pre;
+  pointer-events: none;
+  font: 400 clamp(30px, 6.5vw, 42px)/1 "Great Vibes", "Marck Script", cursive;
+}
+
+/* ==========================================================================
+   Лист = страница книги, вёрстка «точь в точь»
+   Все размеры — в пунктах книжной страницы (PDF: 436,5 × 612,3 pt), измерены по
+   «Книга года одобрено в печать.pdf».
+     --pt  : 1 pt книги на этом экране (лист = 436,5 pt шириной)
+     --fpt : то же для текста, но не меньше 1,25px (текст 12 pt ≥ 15px на телефоне)
+   Текст книги — Century Gothic; если его нет на устройстве — URW Gothic
+   (свободная копия той же гарнитуры, fonts/, лицензия в fonts/URW-LICENSE.txt).
+   ========================================================================== */
+@font-face {
+  font-family: "Book Gothic";
+  src: local("Century Gothic"), local("CenturyGothic"), url("../fonts/URWGothic-Book.otf") format("opentype");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Book Gothic";
+  src: local("Century Gothic Bold"), local("CenturyGothic-Bold"), url("../fonts/URWGothic-Demi.otf") format("opentype");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Book Gothic";
+  src: local("Century Gothic Italic"), local("CenturyGothic-Italic"), url("../fonts/URWGothic-BookOblique.otf") format("opentype");
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "Book Gothic";
+  src: local("Century Gothic Bold Italic"), local("CenturyGothic-BoldItalic"), url("../fonts/URWGothic-DemiOblique.otf") format("opentype");
+  font-weight: 700; font-style: italic; font-display: swap;
+}
+
+main.wrap { container-type: inline-size; }
+
+.sheet {
+  --pt: calc(100cqi / 436.5354);
+  --fpt: clamp(1.25px, var(--pt), 1.45px);       /* текст 12 pt = 15…17,4px: на широком листе шрифт не растёт, в строку помещается больше */
+  --px: max(16px, calc(37 * var(--pt)));        /* поля слева и справа: 37 pt */
+  --pitch: calc(19.9 * var(--fpt));              /* шаг пунктирных строк: 19,9 pt */
+  --dot-c: #9a9a9a;                              /* точки и линия подвала — серые, как в книге */
+
+  /* ширина и высота как на сайте-примере (Energy Check): колонка 860px, высота листа —
+     по содержимому, между листами 24px */
+  margin-bottom: 24px;
+  padding: max(16px, calc(37 * var(--pt))) var(--px) max(18px, calc(35 * var(--pt)));
+  background: var(--paper);
+  border: 1px solid var(--soft);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  color: var(--ink);
+  font: 400 calc(12 * var(--fpt)) / calc(15.3 * var(--fpt)) var(--font-book);   /* 12 / 15,3 pt */
+}
+:root[data-theme="dark"] .sheet { --dot-c: var(--dot); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sheet { --dot-c: var(--dot); } }
+
+/* поток страницы: всё, кроме подвала. flow-root — чтобы подпись шага обтекалась;
+   по вертикали обрезает «хвост» поля ответа (см. .lines) */
+.flow {
+  flex: 1 0 auto;
+  display: flow-root;
+  overflow: hidden;
+  overflow: visible clip;
+}
+.flow-center { display: flex; flex-direction: column; justify-content: center; }   /* стр. 0: текст по центру листа */
+.flow-col { display: flex; flex-direction: column; }
+.justify .tx { text-align: justify; text-align-last: left; }
+.flow-low .tx:last-of-type { margin-bottom: calc(45 * var(--pt)); }                /* стр. 2: в книге QR-код ~50 pt ниже текста */
+
+/* ---------- Текст ---------- */
+.tx { margin: 0 0 calc(4.7 * var(--fpt)); }
+.tx-strong, .h { font-weight: 700; }
+.h { margin: 0 0 calc(4.7 * var(--fpt)); font-size: 1em; line-height: inherit; }
+.hint { margin: 0 0 calc(4.7 * var(--fpt)); font-style: italic; font-size: .92em; }
+
+/* список с галочками */
+.qs { display: flow-root; list-style: none; margin: 0 0 calc(4.7 * var(--fpt)); padding: 0; }
+.qs li { position: relative; padding-left: calc(12.3 * var(--fpt)); margin-bottom: calc(5 * var(--fpt)); }
+.qs li::before {
+  content: "";
+  position: absolute;
+  left: calc(2.4 * var(--fpt));
+  top: calc(1.8 * var(--fpt));
+  width: calc(9.12 * var(--fpt));
+  height: calc(10.42 * var(--fpt));
+  background: var(--acc);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='39.34 -532.88 9.12 10.42'%3E%3Cpath fill='%23000' fill-rule='nonzero' d='M42.955 -524.827C43.665 -525.747 44.381 -526.823 45.1 -528.054C45.707 -529.084 46.371 -530.292 47.092 -531.683C47.159 -531.815 47.231 -531.88 47.309 -531.88C47.414 -531.88 47.465 -531.838 47.465 -531.757C47.465 -531.701 47.437 -531.597 47.384 -531.444C46.871 -529.99 46.338 -528.745 45.779 -527.709C44.993 -526.218 44.342 -525.086 43.832 -524.312C43.605 -523.967 43.428 -523.742 43.301 -523.633C43.171 -523.519 43.027 -523.464 42.874 -523.464C42.709 -523.464 42.566 -523.528 42.438 -523.661C42.357 -523.742 42.213 -523.932 42.011 -524.231C41.729 -524.641 41.242 -525.444 40.551 -526.635C40.409 -526.869 40.34 -527.032 40.34 -527.122C40.34 -527.236 40.428 -527.403 40.604 -527.625C40.794 -527.827 40.933 -527.929 41.019 -527.929C41.128 -527.929 41.239 -527.827 41.358 -527.625C41.998 -526.399 42.529 -525.467 42.955 -524.827'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='39.34 -532.88 9.12 10.42'%3E%3Cpath fill='%23000' fill-rule='nonzero' d='M42.955 -524.827C43.665 -525.747 44.381 -526.823 45.1 -528.054C45.707 -529.084 46.371 -530.292 47.092 -531.683C47.159 -531.815 47.231 -531.88 47.309 -531.88C47.414 -531.88 47.465 -531.838 47.465 -531.757C47.465 -531.701 47.437 -531.597 47.384 -531.444C46.871 -529.99 46.338 -528.745 45.779 -527.709C44.993 -526.218 44.342 -525.086 43.832 -524.312C43.605 -523.967 43.428 -523.742 43.301 -523.633C43.171 -523.519 43.027 -523.464 42.874 -523.464C42.709 -523.464 42.566 -523.528 42.438 -523.661C42.357 -523.742 42.213 -523.932 42.011 -524.231C41.729 -524.641 41.242 -525.444 40.551 -526.635C40.409 -526.869 40.34 -527.032 40.34 -527.122C40.34 -527.236 40.428 -527.403 40.604 -527.625C40.794 -527.827 40.933 -527.929 41.019 -527.929C41.128 -527.929 41.239 -527.827 41.358 -527.625C41.998 -526.399 42.529 -525.467 42.955 -524.827'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* цитата с зелёной кавычкой */
+.quote { position: relative; margin: 0 0 calc(10 * var(--fpt)); padding-left: calc(24 * var(--fpt)); }
+.quote::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--fpt));
+  top: calc(-3.4 * var(--fpt));
+  width: calc(20.92 * var(--fpt));
+  height: calc(16.4 * var(--fpt));
+  background: var(--acc);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='35.85 -463.42 20.92 16.4'%3E%3Cpath fill='%23000' fill-rule='nonzero' d='M41.253 -448.012C39.992 -448.012 38.943 -448.405 38.106 -449.19C37.27 -449.975 36.852 -451.024 36.852 -452.337C36.852 -452.697 36.884 -453.058 36.948 -453.418C37.013 -453.778 37.135 -454.216 37.315 -454.731C37.495 -455.246 37.765 -455.915 38.126 -456.739L40.597 -462.415L45.192 -462.415L42.296 -452.375L41.253 -456.546C42.541 -456.546 43.596 -456.172 44.42 -455.426C45.244 -454.679 45.656 -453.65 45.656 -452.337C45.656 -451.024 45.237 -449.975 44.401 -449.19C43.564 -448.405 42.515 -448.012 41.253 -448.012ZM51.37 -448.012C50.109 -448.012 49.06 -448.405 48.223 -449.19C47.387 -449.975 46.968 -451.024 46.968 -452.337C46.968 -452.697 47.001 -453.058 47.065 -453.418C47.129 -453.778 47.252 -454.216 47.432 -454.731C47.612 -455.246 47.882 -455.915 48.243 -456.739L50.714 -462.415L55.309 -462.415L52.413 -452.375L51.37 -456.546C52.658 -456.546 53.713 -456.172 54.537 -455.426C55.361 -454.679 55.773 -453.65 55.773 -452.337C55.773 -451.024 55.354 -449.975 54.518 -449.19C53.681 -448.405 52.632 -448.012 51.37 -448.012'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='35.85 -463.42 20.92 16.4'%3E%3Cpath fill='%23000' fill-rule='nonzero' d='M41.253 -448.012C39.992 -448.012 38.943 -448.405 38.106 -449.19C37.27 -449.975 36.852 -451.024 36.852 -452.337C36.852 -452.697 36.884 -453.058 36.948 -453.418C37.013 -453.778 37.135 -454.216 37.315 -454.731C37.495 -455.246 37.765 -455.915 38.126 -456.739L40.597 -462.415L45.192 -462.415L42.296 -452.375L41.253 -456.546C42.541 -456.546 43.596 -456.172 44.42 -455.426C45.244 -454.679 45.656 -453.65 45.656 -452.337C45.656 -451.024 45.237 -449.975 44.401 -449.19C43.564 -448.405 42.515 -448.012 41.253 -448.012ZM51.37 -448.012C50.109 -448.012 49.06 -448.405 48.223 -449.19C47.387 -449.975 46.968 -451.024 46.968 -452.337C46.968 -452.697 47.001 -453.058 47.065 -453.418C47.129 -453.778 47.252 -454.216 47.432 -454.731C47.612 -455.246 47.882 -455.915 48.243 -456.739L50.714 -462.415L55.309 -462.415L52.413 -452.375L51.37 -456.546C52.658 -456.546 53.713 -456.172 54.537 -455.426C55.361 -454.679 55.773 -453.65 55.773 -452.337C55.773 -451.024 55.354 -449.975 54.518 -449.19C53.681 -448.405 52.632 -448.012 51.37 -448.012'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ---------- Заголовки страниц: контуры из книги, на всю ширину листа (как на странице) ---------- */
+.page-title { margin: 0 calc(-1 * var(--px)); line-height: 0; color: var(--acc); }
+.title-art { display: block; width: 100%; height: auto; overflow: visible; }
+.title-art .tint { opacity: .75; }
+.title-greeting { margin-top: calc(27.2 * var(--pt)); margin-bottom: calc(32.3 * var(--pt)); }
+.title-finance,
+.title-stage    { margin-top: calc(6.3 * var(--pt));  margin-bottom: calc(5.9 * var(--pt)); }   /* заголовки этапов */
+
+/* заголовок-акцент внутри шага («Колесо Эмоций»): жирный курсив цвета этапа, ~19 pt */
+.h-accent {
+  margin: 0 0 calc(6 * var(--fpt));
+  color: var(--acc);
+  font-weight: 700;
+  font-style: italic;
+  font-size: calc(19 * var(--fpt));
+  line-height: 1.15;
+}
+
+/* две колонки строк с заголовками (стр. 12–13): колонки 168 pt, промежуток 22 pt */
+.cols-head {
+  clear: both;                         /* заголовки колонок — сразу над строками, под подписью шага */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: calc(22 * var(--pt));
+  margin: calc(4 * var(--fpt)) 0 0;
+  text-align: center;
+  font-weight: 700;
+}
+.cols {
+  clear: both;                         /* строки колонок начинаются под подписью шага, как в книге */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: calc(22 * var(--pt));
+}
+.cols .lines { min-width: 0; }
+
+/* ---------- Колесо Эмоций (стр. 17) ----------
+   Круг Ø238,6 pt, серая линия 0,57 pt; квадратики 69,6×25,3 pt с зелёной рамкой #86AD83,
+   строки через 40,8 pt, две колонки (как в книге). Квадратик — выбор цвета, % — доля эмоции;
+   js/main.js закрашивает круг долями (conic-gradient). */
+.wheel {
+  width: calc(238.6 * var(--pt));
+  min-width: 200px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: max(1px, calc(.57 * var(--pt))) solid #999999;
+  background: #ffffff;
+  transition: background .3s ease;
+}
+.wheel-sum { min-height: 1.3em; margin: calc(8 * var(--fpt)) 0 calc(14 * var(--pt)); text-align: center; font-size: .85em; color: var(--text); }
+.wheel-sum.over { color: #b3261e; }
+.emo-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: calc(15.5 * var(--pt));
+  padding-left: calc(27.6 * var(--pt));
+}
+@container (min-width: 520px) {
+  .emo-grid { grid-template-columns: auto auto; justify-content: start; grid-template-rows: repeat(5, auto); grid-auto-flow: column; column-gap: calc(24 * var(--pt)); }
+}
+.emo { display: flex; align-items: center; gap: calc(9.3 * var(--pt)); min-width: 0; }
+.emo-box {
+  flex: none;
+  width: max(52px, calc(69.6 * var(--pt)));
+  height: max(19px, calc(25.3 * var(--pt)));
+  border: max(1px, calc(.57 * var(--pt))) solid #86ad83;
+  background: #ffffff;
+  cursor: pointer;
+  overflow: hidden;
+}
+.emo-box:focus-within { outline: 2px solid var(--acc); outline-offset: 2px; }
+.emo-box input {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+  margin: -4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.emo-box input::-webkit-color-swatch-wrapper { padding: 0; }
+.emo-box input::-webkit-color-swatch { border: 0; }
+.emo-box input::-moz-color-swatch { border: 0; }
+.emo-name { white-space: nowrap; }
+.emo-pct {
+  width: 2.2em;
+  margin-left: auto;
+  padding: 0 2px;
+  border: 0;
+  border-bottom: 1px dotted var(--dot-c);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: right;
+  -moz-appearance: textfield;
+}
+.emo-pct::-webkit-outer-spin-button, .emo-pct::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.emo-pct:focus { outline: none; border-bottom: 1px solid var(--acc); }
+.emo-u { color: var(--text); margin-left: calc(-6 * var(--pt)); padding-right: 4px; }
+
+/* «Вопрос в глубину» и «Задача со звёздочкой»: курсив с подчёркиванием и значок цвета этапа
+   (значки — контуры из книги: «?» в круге 11,6 pt, звезда 13,5 pt) */
+.task {
+  display: flow-root;      /* блок обходит подпись шага слева — значок не прячется под ней на нечётных страницах */
+  position: relative;
+  margin: 0 0 calc(4.7 * var(--fpt));
+  padding-left: calc(16 * var(--fpt));
+  font-style: italic;
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, calc(.5 * var(--fpt)));
+  text-underline-offset: calc(2 * var(--fpt));
+}
+.task::before, .hint-q::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: calc(1.6 * var(--fpt));
+  width: calc(12 * var(--fpt));
+  height: calc(12 * var(--fpt));
+  background: var(--acc);
+  -webkit-mask: var(--icon) center / contain no-repeat;
+          mask: var(--icon) center / contain no-repeat;
+}
+.task-q, .hint-q { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='35.85 -573.58 11.63 11.63'%3E%3Cpath fill='%23000' fill-rule='nonzero' d='M41.081 -566.626C41.059 -566.686 41.04 -566.763 41.023 -566.86C41.006 -566.955 40.998 -567.049 40.998 -567.143C40.998 -567.289 41.027 -567.422 41.086 -567.541C41.145 -567.658 41.218 -567.77 41.305 -567.873C41.392 -567.975 41.486 -568.075 41.588 -568.17C41.689 -568.267 41.784 -568.36 41.872 -568.451C41.959 -568.542 42.032 -568.638 42.09 -568.739C42.149 -568.839 42.178 -568.949 42.178 -569.069C42.178 -569.177 42.157 -569.271 42.113 -569.351C42.07 -569.432 42.012 -569.498 41.936 -569.552C41.861 -569.606 41.775 -569.646 41.678 -569.673C41.581 -569.699 41.478 -569.712 41.367 -569.712C41.011 -569.712 40.672 -569.553 40.348 -569.235L40.348 -570.065C40.74 -570.295 41.147 -570.41 41.568 -570.41C41.762 -570.41 41.945 -570.385 42.117 -570.334C42.29 -570.284 42.44 -570.211 42.57 -570.111C42.699 -570.014 42.8 -569.891 42.875 -569.745C42.949 -569.599 42.985 -569.429 42.985 -569.235C42.985 -569.051 42.955 -568.887 42.892 -568.742C42.83 -568.599 42.752 -568.466 42.657 -568.345C42.563 -568.224 42.461 -568.117 42.352 -568.024C42.243 -567.93 42.142 -567.837 42.047 -567.744C41.953 -567.649 41.875 -567.553 41.812 -567.452C41.751 -567.352 41.719 -567.24 41.719 -567.118C41.719 -567.015 41.733 -566.922 41.758 -566.838C41.785 -566.754 41.811 -566.683 41.838 -566.626ZZM41.49 -565.112C41.353 -565.112 41.233 -565.158 41.127 -565.251C41.027 -565.342 40.977 -565.453 40.977 -565.588C40.977 -565.724 41.027 -565.836 41.127 -565.924C41.23 -566.019 41.35 -566.067 41.49 -566.067C41.626 -566.067 41.746 -566.019 41.849 -565.924C41.949 -565.836 42 -565.724 42 -565.588C42 -565.453 41.949 -565.342 41.849 -565.251C41.743 -565.158 41.623 -565.112 41.49 -565.112'/%3E%3Cpath fill='none' stroke='%23000' stroke-width='0.567' d='M41.667 -572.577C44.327 -572.577 46.483 -570.421 46.483 -567.761C46.483 -565.102 44.327 -562.946 41.667 -562.946C39.008 -562.946 36.852 -565.102 36.852 -567.761C36.852 -570.421 39.008 -572.577 41.667 -572.577'/%3E%3C/svg%3E"); }
+.task-star { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='67.27 -573.71 13.47 11.97'%3E%3Cpath fill='%23000' fill-rule='nonzero' d='M75.567 -569.293C76.924 -569.411 77.615 -569.469 77.638 -569.469C77.833 -569.469 78.011 -569.439 78.176 -569.381L79.025 -569.082C79.428 -568.952 79.646 -568.864 79.683 -568.82C79.718 -568.778 79.736 -568.741 79.736 -568.708C79.736 -568.646 79.711 -568.59 79.66 -568.541C79.607 -568.495 79.247 -568.258 78.582 -567.832L76.525 -566.508L77.483 -564.199C77.777 -563.477 77.935 -563.088 77.96 -563.025C77.986 -562.965 77.998 -562.926 77.998 -562.907C77.998 -562.793 77.928 -562.738 77.786 -562.738C77.715 -562.738 77.631 -562.742 77.536 -562.752L76.34 -562.907C76.145 -562.916 75.978 -562.951 75.839 -563.014C75.698 -563.074 75.05 -563.619 73.896 -564.646L72.475 -563.424C72.113 -563.107 71.89 -562.928 71.807 -562.891C71.723 -562.852 71.645 -562.833 71.573 -562.833L71.415 -562.833L70.457 -562.963C70.29 -562.984 70.165 -563.037 70.082 -563.121C69.998 -563.206 69.957 -563.324 69.957 -563.477C69.957 -563.533 69.964 -563.591 69.98 -563.651C69.996 -563.712 70.124 -564.048 70.362 -564.66L71.165 -566.719L69.453 -567.818C68.883 -568.187 68.568 -568.391 68.512 -568.437C68.456 -568.481 68.401 -568.546 68.35 -568.629C68.297 -568.715 68.271 -568.794 68.271 -568.871C68.271 -569.007 68.322 -569.137 68.424 -569.258C68.526 -569.381 68.702 -569.441 68.957 -569.441L69.175 -569.441L72.013 -569.205L72.693 -572.105C72.744 -572.327 72.811 -572.483 72.894 -572.574C72.978 -572.664 73.082 -572.71 73.21 -572.71C73.237 -572.71 73.451 -572.68 73.852 -572.617C74.253 -572.557 74.489 -572.515 74.561 -572.492C74.633 -572.469 74.703 -572.42 74.772 -572.346C74.84 -572.272 74.893 -572.144 74.934 -571.961ZZM74.283 -568.871L73.738 -571.228C73.59 -571.875 73.497 -572.23 73.46 -572.288C73.425 -572.346 73.36 -572.376 73.27 -572.376C73.18 -572.376 73.115 -572.344 73.073 -572.279C73.033 -572.212 72.971 -571.998 72.89 -571.637L72.252 -568.871L69.052 -569.151L68.93 -569.151C68.695 -569.151 68.577 -569.056 68.577 -568.871C68.577 -568.817 68.6 -568.766 68.649 -568.718C68.695 -568.671 69.031 -568.449 69.657 -568.05L71.573 -566.828L70.601 -564.414C70.374 -563.848 70.26 -563.554 70.26 -563.533C70.26 -563.482 70.286 -563.431 70.332 -563.375C70.381 -563.322 70.436 -563.294 70.499 -563.294C70.543 -563.294 70.594 -563.308 70.648 -563.336C70.703 -563.361 70.993 -563.605 71.517 -564.062L73.27 -565.59L74.969 -564.117C75.531 -563.633 75.839 -563.373 75.892 -563.343C75.948 -563.31 75.999 -563.294 76.048 -563.294C76.117 -563.294 76.17 -563.322 76.212 -563.375C76.251 -563.431 76.272 -563.477 76.272 -563.519C76.272 -563.549 76.161 -563.844 75.941 -564.403L74.976 -566.828L76.986 -568.117C77.552 -568.479 77.856 -568.685 77.896 -568.731C77.937 -568.78 77.958 -568.826 77.958 -568.871C77.958 -569.056 77.847 -569.151 77.624 -569.151L77.483 -569.151Z'/%3E%3C/svg%3E"); }
+.hint-q { display: flow-root; position: relative; padding-left: calc(16 * var(--fpt)); font-size: 1em; }
+
+/* абзац по ширине (вводный текст этапа, стр. 30) и итоговый абзац без выключки (стр. 29) */
+.tx-j { text-align: justify; text-align-last: left; }
+.tx-end-left { text-align: left; }
+
+/* ---------- Колесо баланса (стр. 41) ----------
+   Векторно по книге: круг R 115,7 pt, 10 колец (зелёные #86AD83, внешнее — тёмно-зелёное),
+   8 спиц, подписи Montserrat (заголовки 8 pt ExtraBold, пояснения 6,3 pt).
+   Нажатие в секторе = оценка 0–10 по кольцу; фигура — цвет этапа (js/main.js).
+   SVG на всю ширину листа, как страница книги. */
+.bw-wrap { margin: calc(30 * var(--pt)) calc(-1 * var(--px)) calc(10 * var(--pt)); }
+.bw { display: block; width: 100%; height: auto; overflow: visible; touch-action: manipulation; }
+.bw-ring { fill: none; stroke: #86ad83; stroke-width: .57; }
+.bw-outer { fill: none; stroke: #1f3d24; stroke-width: .8; }
+.bw-spoke { stroke: #1f3d24; stroke-width: .57; }
+.bw-sector { fill: transparent; cursor: pointer; outline: none; transition: fill .2s ease; }
+.bw-sector:hover { fill: color-mix(in srgb, var(--acc) 6%, transparent); }
+.bw-sector:focus-visible { fill: color-mix(in srgb, var(--acc) 12%, transparent); }
+.bw-shape { fill: color-mix(in srgb, var(--acc) 22%, transparent); stroke: var(--acc); stroke-width: 1.4; stroke-linejoin: round; pointer-events: none; transition: all .25s ease; }
+.bw-dots circle { fill: var(--acc); stroke: var(--paper); stroke-width: .8; pointer-events: none; }
+.bw-h { font: 800 8.1px "Montserrat", sans-serif; fill: var(--ink); }
+.bw-d { font: 400 6.3px "Montserrat", sans-serif; fill: var(--ink); }
+.bw-hint { margin: 0; text-align: center; font-size: .82em; color: var(--text); }
+/* на узком экране пояснения слишком мелкие — оставляем только названия сфер, крупнее */
+@container (max-width: 480px) {
+  .bw-d { display: none; }
+  .bw-h { font-size: 10px; }
+}
+:root[data-theme="dark"] .bw-outer, :root[data-theme="dark"] .bw-spoke { stroke: #9fc3a2; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bw-outer, :root:not([data-theme="light"]) .bw-spoke { stroke: #9fc3a2; } }
+
+/* ---------- Стр. 44 ----------
+   рамка для главного слова года (пунктир, как в книге, ~317 × 38 pt),
+   вторая подпись шага ниже первой, QR медитации справа внизу (74,6 pt) */
+.word-box {
+  display: block;
+  width: min(100%, calc(317 * var(--pt)));
+  height: max(40px, calc(38 * var(--pt)));
+  margin: calc(10 * var(--fpt)) 0 calc(6 * var(--fpt));
+  padding: 0 calc(10 * var(--fpt));
+  border: max(1.5px, calc(1.2 * var(--pt))) dotted var(--dot-c);
+  border-radius: 0;
+  background: transparent;
+  color: var(--acc);
+  caret-color: var(--acc);
+  /* каллиграфия, как имя на обложке (Great Vibes), цвет этапа */
+  font: 400 max(28px, calc(26 * var(--fpt))) / 1 "Great Vibes", "Marck Script", cursive;
+  text-align: center;
+  outline: none;
+}
+.word-box:focus { border-color: var(--acc); }
+.side-2 { clear: right; margin-top: calc(14 * var(--fpt)); }
+.odd .side-2 { clear: left; }
+.h-gap { margin-top: calc(20 * var(--fpt)); }
+/* плеер с подписью — посередине между строками и подписью подвала:
+   сверху 50 pt; снизу — отступ подвала (25 pt) + его собственный запас над текстом ≈ те же 50 pt */
+.sheet:has(.media-med) .flow { flex-grow: 0; }
+.media-med { margin: auto 0; padding: calc(50 * var(--pt)) 0 0; }   /* плеер медитации под строками, на всю ширину текста */
+/* свой аудиоплеер: тонкая полоса цвета этапа без рамки и скруглений,
+   слева и справа плавно растворяется в лист */
+.aplayer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 52px;
+  margin-bottom: calc(8 * var(--pt));
+  padding: 0 14% 0 14%;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(to right,
+    color-mix(in srgb, var(--acc) 0%, transparent) 0%,
+    color-mix(in srgb, var(--acc) 13%, transparent) 14%,
+    color-mix(in srgb, var(--acc) 13%, transparent) 86%,
+    color-mix(in srgb, var(--acc) 0%, transparent) 100%);
+}
+.ap-play {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--acc) 88%, transparent);
+  color: var(--paper);
+  cursor: pointer;
+  transition: transform .15s ease, background-color .2s ease;
+}
+.ap-play:hover { transform: scale(1.06); background: var(--acc); }
+.ap-play svg { width: 18px; height: 18px; fill: currentColor; }
+.ap-i-pause { display: none; }
+.aplayer.is-playing .ap-i-play { display: none; }
+.aplayer.is-playing .ap-i-pause { display: inline; }
+.ap-seek {
+  --p: 0%;
+  flex: 1;
+  min-width: 0;
+  height: 18px;
+  margin: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+.ap-seek::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--acc) var(--p), color-mix(in srgb, var(--acc) 22%, transparent) var(--p));
+}
+.ap-seek::-moz-range-track { height: 4px; border-radius: 2px; background: color-mix(in srgb, var(--acc) 22%, transparent); }
+.ap-seek::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--acc); }
+.ap-seek::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; margin-top: -4px; border-radius: 50%; background: var(--acc); border: 2px solid var(--paper); }
+.ap-seek::-moz-range-thumb { width: 10px; height: 10px; border-radius: 50%; background: var(--acc); border: 2px solid var(--paper); }
+.ap-time { flex: none; font: 500 13px var(--font-display); color: var(--ink); font-variant-numeric: tabular-nums; opacity: .8; }
+.media-right { align-self: flex-end; margin: calc(10 * var(--pt)) 0 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; font-size: calc(9.5 * var(--fpt)); line-height: 1.3; }
+.media-right small { display: block; font-size: .74em; }
+.media-right small b { font-weight: 700; }
+.media-qr {
+  display: block;
+  width: max(84px, calc(74.6 * var(--pt)));
+  height: auto;
+  margin-bottom: calc(6 * var(--pt));
+  background: #ffffff;
+  image-rendering: pixelated;
+}
+:root[data-theme="dark"] .media-qr { padding: 6px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .media-qr { padding: 6px; } }
+
+/* ---------- Стр. 45–47 (Древо желаний) ---------- */
+.title-art .sub { opacity: .9; }                         /* «Первый день» под заголовком этапа */
+.tx-qr { display: flex; align-items: flex-end; gap: calc(14 * var(--pt)); }
+.tx-qr .tx { flex: 1; margin: 0; }
+.qr-fig { flex: none; margin: 0; display: flex; flex-direction: column; align-items: center; text-align: center; font-size: calc(9.5 * var(--fpt)); line-height: 1.3; }
+.qr-fig small { display: block; font-size: .74em; }
+.qr-fig small b { font-weight: 700; }
+.media-efir { margin: calc(16 * var(--pt)) 0 calc(14 * var(--pt)); }   /* эфир внутри текста страницы (стр. 46) */
+.media.media-bottom { margin: max(28px, calc(36 * var(--pt))) 0 0; }   /* .media.… — сильнее общего правила .media ниже */          /* эфир под строками (стр. 74), с воздухом от строк */.qr-center { margin: calc(16 * var(--pt)) auto calc(14 * var(--pt)); }
+.qs-bold { margin-bottom: calc(3 * var(--fpt)); }
+.qs-bold li { font-weight: 700; margin-bottom: 0; }
+em.u { font-style: italic; text-decoration: underline; text-underline-offset: 2px; }
+.side-word { padding-top: 0; }
+.odd .side.side-word { transform: none; padding: 0 calc(14 * var(--fpt)) calc(8 * var(--fpt)) 0; }   /* «recommendation» уже повёрнуто, как в книге */
+.tx-clear { clear: both; }
+/* стр. 49: мелкий абзац, подчёркнутая оговорка, подпись медитации с кружком «1» (круг Древа) */
+.tx-small { font-size: .92em; }
+.u-plain { text-decoration: underline; text-underline-offset: 2px; }
+/* под плеером: подпись медитации, под ней по центру кружок «1» */
+.cap-badge { display: flex; flex-direction: column; align-items: center; gap: calc(8 * var(--pt)); }
+#p49 .lines { min-height: calc(11 * var(--pitch) + 9999px); }              /* больше строк для письма */
+#p49 .media-med { padding-top: calc(28 * var(--pt)); margin-bottom: calc(-12 * var(--pt)); }   /* медитация ближе к строкам, «1» под подписью */
+/* стр. 51 «Ресурсный круг»: пунктирный овал в центре (как в книге, 87 × 42 pt),
+   вокруг 8 мест для того, что наполняет; надписи — каллиграфией, как имя на обложке */
+.rc { position: relative; width: 100%; aspect-ratio: 1 / 1.05; margin: calc(20 * var(--pt)) 0; }
+.rc-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(170px, calc(150 * var(--pt)));
+  height: max(84px, calc(74 * var(--pt)));
+  transform: translate(-50%, -50%);
+  border: max(1.5px, calc(1.2 * var(--pt))) dotted var(--dot-c);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  caret-color: var(--acc);
+  font: 400 max(24px, calc(22 * var(--fpt))) / 1 "Great Vibes", "Marck Script", cursive;
+  text-align: center;
+  outline: none;
+}
+.rc-center:focus { border-color: var(--acc); }
+.rc-center::placeholder, .rc-item::placeholder { color: color-mix(in srgb, var(--dot-c) 70%, transparent); }
+.rc-item {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: max(110px, 30%);
+  transform: translate(-50%, -.7em);          /* привязка по первой строке — дополнительные строки растут вниз */
+  display: block;
+  overflow: hidden;
+  resize: none;
+  padding: 0 4px;
+  border: 0;
+  /* линия под каждой строкой (шаг = высота строки) */
+  --lh: 30px;                                  /* целое число пикселей — линии ложатся ровно */
+  line-height: var(--lh);
+  background: transparent linear-gradient(to bottom,
+    transparent 0, transparent 27px,
+    color-mix(in srgb, var(--dot-c) 70%, transparent) 27px, color-mix(in srgb, var(--dot-c) 70%, transparent) 28px,
+    transparent 28px)
+    0 0 / 100% var(--lh) repeat-y local;
+  color: var(--ink);
+  caret-color: var(--acc);
+  font: 400 max(20px, calc(17 * var(--fpt))) / var(--lh) "Great Vibes", "Marck Script", cursive;
+  text-align: center;
+  outline: none;
+}
+.rc-item:focus { border-bottom-color: var(--acc); }
+.badge-1 { width: max(30px, calc(32 * var(--pt))); height: auto; color: var(--acc); flex: none; }
+/* стр. 48: иллюстрация Древа на всю ширину текста, как в книге (362,8 × 500 pt) */
+.tree-img { display: block; width: 100%; height: auto; margin: calc(8 * var(--pt)) auto 0; }
+/* круги-желания поверх рисунка: внутренняя часть нарисованного кольца (Ø ≈ 13,8 % ширины рисунка) */
+.tree-wrap { position: relative; }
+.wish {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 15.4%;                         /* почти до нарисованного кольца (кольцо ≈ 17 %) */
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow .2s ease, background-color .2s ease;
+}
+.wish:hover, .wish:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--acc) 45%, transparent); background: color-mix(in srgb, var(--acc) 8%, transparent); }
+.wish-pic { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; }
+.wish-txt {
+  position: absolute;
+  inset: 12%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font: 400 clamp(8px, 1.5cqi, 12px) / 1.15 var(--font-book);
+  color: var(--ink);
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.wish.has-text:not(.has-pic) { background: color-mix(in srgb, var(--paper) 90%, transparent); }
+.wish.has-text:not(.has-pic) .wish-txt { display: flex; }
+.wish.has-pic::after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 2.5px #1f3b1d; pointer-events: none; }   /* тёмно-зелёное кольцо, как на рисунке */
+
+/* окно желания */
+.wish-dlg {
+  width: min(92vw, 420px);
+  padding: 22px 22px 18px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+  font: 400 16px / 1.4 var(--font-book);
+}
+.wish-dlg::backdrop { background: rgba(10, 14, 24, .45); }
+.wish-dlg .h { margin: 0 0 10px; color: var(--acc); font-size: 1.15em; }
+.wish-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  resize: vertical;
+}
+.wish-input:focus { outline: none; border-color: var(--acc); }
+.wish-pic-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+/* картинка в круге: масштаб --z и сдвиг --px/--py (в % от круга), одинаково в предпросмотре и на Древе */
+.wish-pic img, .wish-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translate(var(--px, 0%), var(--py, 0%)) scale(var(--z, 1));
+  transform-origin: center;
+  pointer-events: none;
+  user-select: none;
+}
+.wish-pic img:not([src]), .wish-preview img:not([src]), .wish-preview img[src=""] { display: none; }
+.wish-preview {
+  flex: none;
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--acc) 10%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--acc) 40%, transparent);
+  touch-action: none;
+}
+.wish-preview.has-img { cursor: grab; border-style: solid; }
+.wish-preview.dragging { cursor: grabbing; }
+.wish-pic-row { align-items: flex-start; }
+.wish-pic-ctrl { flex: 1; min-width: 180px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.wish-zoom { width: 100%; display: flex; align-items: center; gap: 10px; font: 600 14px var(--font-display); color: color-mix(in srgb, var(--acc) 78%, #000); }
+.wish-zoom input { flex: 1; accent-color: var(--acc); }
+.wish-zoom.is-off { opacity: .4; pointer-events: none; }
+.wish-tip { width: 100%; font-size: 12px; color: var(--text); }
+.wish-file, .wish-clear, .wish-done {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--acc) 14%, transparent);
+  color: color-mix(in srgb, var(--acc) 78%, #000);
+  font: 600 14px var(--font-display);
+  cursor: pointer;
+}
+.wish-file input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.wish-file:focus-within { outline: 2px solid var(--acc); outline-offset: 2px; }
+.wish-actions { display: flex; justify-content: flex-end; margin-top: 16px; }
+.wish-done { background: var(--acc); color: var(--paper); }
+/* кнопки-ссылки на основу Древа (стр. 45): цвет этапа, скруглённые, подпись мелко под словом */
+.tree-links { display: flex; flex-wrap: wrap; gap: calc(12 * var(--pt)); margin-top: calc(18 * var(--pt)); }
+/* в стиле плеера медитации: без рамки и скруглений, слева и справа растворяется в лист,
+   цвет этапа чуть прозрачный */
+.btn-link {
+  --a: 32%;
+  flex: 1 1 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 52px;
+  padding: 8px 12%;
+  white-space: nowrap;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(to right,
+    color-mix(in srgb, var(--acc) 0%, transparent) 0%,
+    color-mix(in srgb, var(--acc) var(--a), transparent) 12%,
+    color-mix(in srgb, var(--acc) var(--a), transparent) 88%,
+    color-mix(in srgb, var(--acc) 0%, transparent) 100%);
+  color: color-mix(in srgb, var(--acc) 78%, #000);   /* фон стал светлым — текст тёмным цветом этапа, чтобы читался */
+  text-decoration: none;
+  line-height: 1.2;
+  transition: --a .25s ease;
+}
+@property --a { syntax: "<percentage>"; inherits: false; initial-value: 32%; }
+.btn-link b { font-weight: 700; font-size: 1.05em; display: inline-flex; align-items: center; gap: .4em; }
+/* значок «скачать» справа от «Первый» / «Второй» */
+.btn-link b::after {
+  content: "";
+  width: 1em;
+  height: 1em;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5v11.5'/%3E%3Cpath d='M6.5 10l5.5 5.5 5.5-5.5'/%3E%3Cpath d='M4.5 20h15'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5v11.5'/%3E%3Cpath d='M6.5 10l5.5 5.5 5.5-5.5'/%3E%3Cpath d='M4.5 20h15'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.btn-link small { font-size: .78em; opacity: .92; }
+.btn-link:hover, .btn-link:focus-visible { --a: 48%; }
+.btn-link.is-disabled { background: color-mix(in srgb, var(--acc) 18%, transparent); color: var(--acc); cursor: default; }
+.btn-link.is-disabled:hover { transform: none; box-shadow: none; }
+@container (max-width: 480px) { .tx-qr { flex-direction: column; align-items: center; } }
+
+/* «Варианты действий:» — подчёркнутый курсив, как в книге */
+.tx.va { font-style: italic; text-decoration: underline; text-underline-offset: 2px; margin-bottom: calc(3 * var(--fpt)); }
+/* нумерованные абзацы (стр. 70) */
+.ol { margin: 0 0 calc(4.7 * var(--fpt)); padding-left: 1.4em; }
+.ol li { margin-bottom: calc(4.7 * var(--fpt)); }
+/* номер круга Древа внизу страницы, по центру (как в книге) */
+.tree-badge { display: flex; justify-content: center; margin-top: calc(10 * var(--pt)); color: var(--acc); }
+
+/* «ВАЖНО» / «Приклей образ…» (стр. 73): значок «!» в круге цвета этапа, контур из книги */
+.tx-warn { display: flow-root; position: relative; padding-left: calc(15 * var(--fpt)); }
+.tx-warn::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: calc(2 * var(--fpt));
+  width: calc(11.5 * var(--fpt));
+  height: calc(11.5 * var(--fpt));
+  background: var(--acc);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='36.32 -97.48 11.63 11.63'%3E%3Cpath fill='%23000' fill-rule='nonzero' d='M42.536 -94.274L42.469 -90.637L41.786 -90.637L41.693 -94.274ZZM42.138 -89.057C41.995 -89.057 41.872 -89.103 41.772 -89.195C41.671 -89.287 41.621 -89.398 41.621 -89.529C41.621 -89.665 41.671 -89.78 41.772 -89.876C41.872 -89.971 41.995 -90.019 42.138 -90.019C42.277 -90.019 42.398 -89.971 42.499 -89.876C42.601 -89.78 42.651 -89.665 42.651 -89.529C42.651 -89.398 42.601 -89.287 42.499 -89.195C42.398 -89.103 42.277 -89.057 42.138 -89.057'/%3E%3Cpath fill='none' stroke='%23000' stroke-width='0.567' d='M42.136 -96.481C44.796 -96.481 46.952 -94.325 46.952 -91.665C46.952 -89.006 44.796 -86.85 42.136 -86.85C39.477 -86.85 37.321 -89.006 37.321 -91.665C37.321 -94.325 39.477 -96.481 42.136 -96.481'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='36.32 -97.48 11.63 11.63'%3E%3Cpath fill='%23000' fill-rule='nonzero' d='M42.536 -94.274L42.469 -90.637L41.786 -90.637L41.693 -94.274ZZM42.138 -89.057C41.995 -89.057 41.872 -89.103 41.772 -89.195C41.671 -89.287 41.621 -89.398 41.621 -89.529C41.621 -89.665 41.671 -89.78 41.772 -89.876C41.872 -89.971 41.995 -90.019 42.138 -90.019C42.277 -90.019 42.398 -89.971 42.499 -89.876C42.601 -89.78 42.651 -89.665 42.651 -89.529C42.651 -89.398 42.601 -89.287 42.499 -89.195C42.398 -89.103 42.277 -89.057 42.138 -89.057'/%3E%3Cpath fill='none' stroke='%23000' stroke-width='0.567' d='M42.136 -96.481C44.796 -96.481 46.952 -94.325 46.952 -91.665C46.952 -89.006 44.796 -86.85 42.136 -86.85C39.477 -86.85 37.321 -89.006 37.321 -91.665C37.321 -94.325 39.477 -96.481 42.136 -96.481'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.word-box-wide { width: 100%; }
+.ol .qs { margin: calc(4 * var(--fpt)) 0 0 -1.4em; }
+
+/* ---------- Стр. 75–97 ---------- */
+.tx-num { padding-left: 0; }
+.sheet-top .flow { padding-top: calc(10 * var(--pt)); }      /* продолжение раздела без заголовка */
+.tx-after { margin-top: calc(24 * var(--pt)); }
+.odd .side.side-prep { transform: none; padding: 0 calc(14 * var(--fpt)) calc(8 * var(--fpt)) 0; }   /* «preparation» уже повёрнуто, как в книге */
+.lines.lines-page { min-height: calc(23 * var(--pitch) + 9999px); margin-top: calc(14 * var(--pt)); }   /* страницы для заметок */
+.sheet-final .flow.final { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(26 * var(--pt)); min-height: calc(440 * var(--pt)); text-align: center; }
+.final-text { width: 100%; color: var(--acc); }
+.final-svg { display: block; width: 100%; height: auto; }
+.final-qr { width: max(140px, calc(133.6 * var(--pt))); height: auto; background: #fff; image-rendering: pixelated; }
+.final-link { display: flex; flex-direction: column; align-items: center; gap: calc(22 * var(--pt)); text-decoration: none; }
+.final-link:hover .final-qr, .final-link:focus-visible .final-qr { outline: 2px solid var(--acc); outline-offset: 6px; }
+.final-link:hover .final-handle { color: var(--acc); }
+.final-handle { margin: 0; color: #444444; font: 400 calc(14 * var(--fpt)) var(--font-display); letter-spacing: .04em; }
+:root[data-theme="dark"] .final-handle { color: var(--ink); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .final-handle { color: var(--ink); } }
+
+/* итоговый абзац внизу страницы, над подвалом (стр. 13) */
+.tx-end { margin: calc(8 * var(--fpt)) 0 0; text-align: justify; text-align-last: left; }
+
+/* ---------- Подпись шага сбоку: «step N» + «Момент …», текст и строки её обтекают ----------
+   Чётная страница — справа, читается сверху вниз; нечётная — слева, повернута на 180°. */
+.side {
+  float: right;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(5 * var(--fpt));
+  padding: 0 0 calc(8 * var(--fpt)) calc(11 * var(--fpt));
+  background: var(--paper);          /* закрывает точки строк рядом с подписью */
+  position: relative;
+  z-index: 1;
+}
+.odd .side {
+  float: left;
+  padding: calc(8 * var(--fpt)) 0 0 calc(11 * var(--fpt));
+  transform: rotate(180deg);
+}
+.side-step { display: block; width: calc(var(--w) * var(--fpt)); height: calc(var(--h) * var(--fpt)); color: var(--acc); }
+.side-name { writing-mode: vertical-rl; font-weight: 700; line-height: 1; white-space: nowrap; }
+
+/* ---------- Поле ответа: пунктирные строки как в книге ----------
+   точки Ø1,4 pt через 4,15 pt, строки через 19,9 pt, серые.
+   Отступ 9999px снизу + clip у .flow: точки доходят до подвала на любой высоте листа. */
+.lines {
+  display: block;
+  min-height: calc(6 * var(--pitch) + 9999px);   /* лист по высоте содержимого — места под ответ минимум 6 строк, дальше растёт (+9999px — служебный отступ снизу, см. ниже) */
+  margin: calc(6 * var(--fpt)) 0 -9999px;
+  padding: 0 0 9999px;
+  line-height: var(--pitch);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  outline: none;
+  caret-color: var(--acc);
+  cursor: text;
+  /* точки на 4 pt ниже линии текста (не задевают хвосты «р», «у», «д») и полупрозрачные,
+     чтобы не мешали читать то, что человек пишет */
+  --dot-a: 55%;
+  background-image: radial-gradient(circle at calc(.7 * var(--fpt)) calc(100% - 2.6 * var(--fpt)),
+    color-mix(in srgb, var(--dot-c) var(--dot-a), transparent) calc(.7 * var(--fpt)),
+    transparent calc(.7 * var(--fpt) + .6px));
+  background-size: calc(4.15 * var(--fpt)) var(--pitch);
+  background-position: 0 0;
+}
+.lines:focus {
+  --dot-c: var(--acc);
+  --dot-a: 40%;          /* цвет этапа, но приглушённый */
+}
+
+/* ---------- Эфир (видео) ---------- */
+/* Блок по центру листа: плеер на месте QR-кода из книги (ширина текста листа, 16:9) + подпись. */
+.media {
+  margin: auto 0 calc(20 * var(--pt));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-size: calc(9.5 * var(--fpt));
+  line-height: 1.3;
+}
+.media a { color: var(--ink); text-decoration: none; }
+.media-cap small { display: block; font-size: .74em; }
+.media-cap small b { font-weight: 700; }
+.media-cap:hover { text-decoration: underline; text-underline-offset: 3px; }
+.media-player {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: calc(8 * var(--pt));
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000000;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, .12);
+}
+.media-player iframe { display: block; width: 100%; height: 100%; border: 0; }
+
+/* ---------- Подвал страницы, как в книге ----------
+   чётная:   @annetta_kustova ——— Книга года  N/96
+   нечётная: N/96 ——— эмблема */
+.pf {
+  display: flex;
+  align-items: baseline;
+  margin-top: calc(25 * var(--pt));
+  color: var(--acc);
+  font-size: calc(11 * var(--fpt));
+  line-height: 1;
+  white-space: nowrap;
+}
+.pf-rule {
+  flex: 1;
+  min-width: 12px;
+  height: max(1px, calc(.25 * var(--pt)));
+  background: var(--dot-c);
+  transform: translateY(calc(-6.9 * var(--fpt)));
+  margin: 0 calc(30 * var(--pt));
+}
+.odd .pf-rule { margin: 0 calc(11 * var(--pt)) 0 calc(15 * var(--pt)); }
+.pf-num { font-size: calc(16 * var(--fpt)); font-variant-numeric: tabular-nums; }
+.even .pf-num { margin-left: calc(16 * var(--pt)); }
+.pf-num b { font-size: 1.5em; font-weight: 400; }
+.pf-logo { flex: none; width: calc(48 * var(--fpt)); height: calc(32.4 * var(--fpt)); margin-bottom: calc(-9.6 * var(--fpt)); color: var(--acc); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; scroll-behavior: auto !important; }
+}

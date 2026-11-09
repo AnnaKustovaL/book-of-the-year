@@ -1,0 +1,251 @@
+/* ==========================================================================
+   Окно «Синхронизация ваших записей» — показывается при первом посещении.
+   Перенесено из присланного макета sync-modal.html; токены ограничены окном,
+   чтобы не влиять на остальной сайт.
+   ========================================================================== */
+.sync-modal{
+  --navy-950:#050a1c;
+  --navy-900:#081029;
+  --navy-800:#0d1a42;
+  --gold-1:#fff3c4;
+  --gold-2:#f5cc63;
+  --gold-3:#cf9a30;
+  --gold-4:#8c5c16;
+  --text:#eef1fb;
+  --muted:#9fabd2;
+  --error:#ff9b8f;
+  --gold-grad:linear-gradient(180deg,var(--gold-1) 0%,var(--gold-2) 38%,var(--gold-3) 72%,var(--gold-4) 100%);
+  --gold-line:linear-gradient(90deg,transparent,var(--gold-2),transparent);
+  --radius:22px;
+
+  position:fixed;inset:0;z-index:1000;
+  display:grid;place-items:center;padding:16px;
+  font-family:"Montserrat",system-ui,sans-serif;color:var(--text);
+  visibility:hidden;opacity:0;
+  transition:opacity .45s ease,visibility 0s linear .45s;
+}
+.sync-modal *{box-sizing:border-box}
+.sync-modal.is-open{visibility:visible;opacity:1;transition:opacity .45s ease}
+
+.sync-modal__backdrop{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,#0b1638cc 0%,#03071acc 70%);
+  backdrop-filter:blur(8px) saturate(120%);
+  -webkit-backdrop-filter:blur(8px) saturate(120%);
+}
+
+.sync-modal__panel{
+  position:relative;width:min(440px,100%);
+  overflow:hidden;
+  padding:44px 36px 34px;border-radius:var(--radius);
+  text-align:center;
+  border:1px solid transparent;
+  background:
+    linear-gradient(165deg,var(--navy-800) 0%,var(--navy-900) 55%,var(--navy-950) 100%) padding-box,
+    linear-gradient(160deg,#f5cc63aa,#8c5c1633 40%,#f5cc6322 60%,#f5cc63aa) border-box;
+  box-shadow:0 30px 80px -20px #000c,0 0 0 1px #ffffff08 inset,0 0 60px -10px #f5cc6326;
+  transform:translateY(24px) scale(.96);
+  transition:transform .55s cubic-bezier(.2,.9,.25,1.15);
+}
+.sync-modal.is-open .sync-modal__panel{transform:none}
+
+.sync-modal__panel::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.7;
+  background:
+    radial-gradient(1px 1px at 15% 18%,#fff 50%,transparent 51%),
+    radial-gradient(1px 1px at 82% 12%,#fff 50%,transparent 51%),
+    radial-gradient(1.4px 1.4px at 90% 55%,#ffe9a8 50%,transparent 51%),
+    radial-gradient(1px 1px at 8% 64%,#fff 50%,transparent 51%),
+    radial-gradient(1px 1px at 60% 90%,#fff 50%,transparent 51%),
+    radial-gradient(1.2px 1.2px at 35% 8%,#ffe9a8 50%,transparent 51%);
+  animation:sync-twinkle 4s ease-in-out infinite alternate;
+}
+.sync-modal__stars{position:absolute;inset:0;pointer-events:none;z-index:0}
+.sync-modal .star{
+  position:absolute;border-radius:50%;background:#fff;
+  box-shadow:0 0 4px 1px #ffffffaa;opacity:.15;
+  animation:sync-star var(--d,3s) ease-in-out var(--delay,0s) infinite;
+}
+.sync-modal .star--gold{background:#ffe9a8;box-shadow:0 0 6px 1px #f5cc63aa}
+@keyframes sync-star{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
+.sync-modal .sparkle{
+  position:absolute;width:var(--s,14px);height:var(--s,14px);
+  transform:translate(-50%,-50%);
+  animation:sync-sparkle var(--d,4s) ease-in-out var(--delay,0s) infinite;opacity:0;
+}
+.sync-modal .sparkle::before,.sync-modal .sparkle::after{
+  content:"";position:absolute;left:50%;top:50%;
+  background:linear-gradient(90deg,transparent,#fff7d6,transparent);
+  transform:translate(-50%,-50%);
+}
+.sync-modal .sparkle::before{width:100%;height:1.5px}
+.sync-modal .sparkle::after{width:1.5px;height:100%;background:linear-gradient(180deg,transparent,#fff7d6,transparent)}
+.sync-modal .sparkle i{
+  position:absolute;left:50%;top:50%;width:3px;height:3px;border-radius:50%;
+  transform:translate(-50%,-50%);background:#fff;
+  box-shadow:0 0 6px 2px #f5cc63cc,0 0 12px 3px #f5cc6355;
+}
+@keyframes sync-sparkle{
+  0%,100%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(0deg)}
+  45%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(45deg)}
+  60%{opacity:.9;transform:translate(-50%,-50%) scale(.85) rotate(60deg)}
+}
+.sync-modal__panel::after{
+  content:"";position:absolute;left:50%;bottom:-120px;width:340px;height:220px;
+  transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(ellipse at center,#f5cc6326 0%,transparent 65%);
+  filter:blur(6px);
+}
+@keyframes sync-twinkle{from{opacity:.35}to{opacity:.85}}
+
+.sync-modal__close{
+  position:absolute;top:14px;right:14px;z-index:2;
+  width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;cursor:pointer;
+  color:var(--gold-2);background:#ffffff08;border:1px solid #f5cc6340;
+  transition:background .25s,transform .25s,border-color .25s;
+}
+.sync-modal__close:hover{background:#f5cc6318;border-color:#f5cc63aa;transform:rotate(90deg)}
+.sync-modal__close:focus-visible{outline:2px solid var(--gold-2);outline-offset:3px}
+
+.sync-modal__content{position:relative;z-index:1}
+.sync-modal__lotus{width:130px;height:auto;margin:0 auto 10px;display:block;filter:drop-shadow(0 0 12px #f5cc6355)}
+.sync-modal__divider{width:120px;height:1px;margin:0 auto 22px;background:var(--gold-line)}
+
+.sync-modal__title{
+  margin:0;
+  font:600 clamp(26px,6.4vw,34px)/1 "Cormorant Garamond",serif;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 2px 0 #3a240566);
+}
+.sync-modal__script{
+  display:block;margin-top:10px;padding:0 0 4px;
+  font:500 clamp(17px,4.2vw,21px)/1.2 "Cormorant Garamond",serif;
+  text-transform:uppercase;letter-spacing:.22em;
+  background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sync-modal__subtitle{margin:16px auto 28px;max-width:300px;font:italic 500 19px/1.35 "Cormorant Garamond",serif;color:var(--muted)}
+
+.sync-form{display:grid;gap:18px;text-align:left}
+.sync-form .field{position:relative}
+.sync-form .field__label{
+  display:block;margin:0 0 8px 4px;
+  font:600 11px/1 "Montserrat";letter-spacing:.18em;text-transform:uppercase;color:var(--gold-2);opacity:.85;
+}
+.sync-form .field__wrap{position:relative}
+.sync-form .field__icon{
+  position:absolute;left:16px;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;color:#f5cc6399;pointer-events:none;transition:color .25s;
+}
+.sync-form .field__input{
+  width:100%;height:54px;padding:0 18px 0 46px;
+  font:500 16px/1 "Montserrat";color:var(--text);
+  background:#0a143a99;border:1px solid #f5cc6333;border-radius:14px;outline:none;
+  transition:border-color .25s,box-shadow .25s,background .25s;
+}
+.sync-form .field__input::placeholder{color:#7d89b3}
+.sync-form .field__input:hover{border-color:#f5cc6366}
+.sync-form .field__input:focus{border-color:var(--gold-2);background:#0d1a46cc;box-shadow:0 0 0 4px #f5cc631f,0 0 24px -6px #f5cc6366}
+.sync-form .field__wrap:focus-within .field__icon{color:var(--gold-2)}
+.sync-form .field.is-invalid .field__input{border-color:var(--error);box-shadow:0 0 0 4px #ff9b8f1a}
+.sync-form .field__error{margin:6px 0 0 6px;font:500 12px/1.3 "Montserrat";color:var(--error);display:none}
+.sync-form .field.is-invalid .field__error{display:block}
+
+.sync-btn{
+  position:relative;overflow:hidden;margin-top:8px;
+  height:56px;border:0;border-radius:999px;cursor:pointer;
+  font:700 15px/1 "Montserrat";letter-spacing:.12em;text-transform:uppercase;
+  color:#3a2405;background:var(--gold-grad);
+  box-shadow:0 10px 30px -10px #f5cc63aa,0 1px 0 #fff6 inset;
+  transition:transform .2s,box-shadow .25s,filter .25s;
+}
+.sync-btn::after{
+  content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(100deg,transparent,#ffffffaa,transparent);
+  transform:skewX(-20deg);transition:left .7s ease;
+}
+.sync-btn:hover{transform:translateY(-2px);box-shadow:0 16px 36px -10px #f5cc63cc,0 1px 0 #fff6 inset}
+.sync-btn:hover::after{left:120%}
+.sync-btn:active{transform:translateY(0)}
+.sync-btn:focus-visible{outline:2px solid var(--gold-1);outline-offset:4px}
+.sync-btn[disabled]{cursor:progress;filter:saturate(.7) brightness(.9)}
+.sync-btn__spinner{
+  display:none;width:20px;height:20px;margin:0 auto;border-radius:50%;
+  border:2px solid #3a240555;border-top-color:#3a2405;animation:sync-spin .8s linear infinite;
+}
+.sync-btn.is-loading .sync-btn__text{display:none}
+.sync-btn.is-loading .sync-btn__spinner{display:block}
+@keyframes sync-spin{to{transform:rotate(360deg)}}
+
+.sync-modal__note{margin:18px 0 0;text-align:center;font:500 12px/1.5 "Montserrat";color:#7d89b3}
+.sync-modal__note svg{width:12px;height:12px;vertical-align:-1px;margin-right:4px;color:var(--gold-3)}
+
+/* «У меня уже есть аккаунт — Войти» */
+.sync-modal__login{margin:20px 0 0;text-align:center;font:italic 500 18px/1.4 "Cormorant Garamond",serif;color:var(--muted)}
+.sync-modal__login-link{
+  padding:0 0 2px;border:0;background:none;cursor:pointer;
+  font:600 13px/1 "Montserrat";letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold-2);border-bottom:1px solid #f5cc6366;transition:color .2s,border-color .2s;
+}
+.sync-modal__login-link:hover{color:var(--gold-1);border-color:var(--gold-1)}
+.sync-modal__login-link:focus-visible{outline:2px solid var(--gold-2);outline-offset:4px;border-radius:2px}
+.sync-modal__subtitle{max-width:330px}
+
+/* экраны окна: регистрация / вход / код / готово — показывается тот, что в data-view */
+.sync-modal .sv{display:none}
+.sync-modal[data-view="register"] .sv-register,
+.sync-modal[data-view="login"] .sv-login,
+.sync-modal[data-view="code"] .sv-code{display:block;animation:sync-rise .45s ease both}
+.sync-modal[data-view="success"] .sv-success{display:block;animation:sync-rise .6s ease both;padding:10px 0 4px}
+.sync-modal[data-view="success"] .sync-modal__lotus{animation:sync-bloom 1.4s ease both}
+.sync-modal__subtitle b{font-style:normal;font-weight:600;color:var(--gold-2);word-break:break-all}
+.sync-modal__login--small{margin-top:8px;font-size:16px}
+.sync-resend-timer{font:500 12px "Montserrat";color:#7d89b3;margin-left:6px}
+.sync-modal__login-link[disabled]{opacity:.45;cursor:default;border-bottom-color:transparent}
+
+/* шесть ячеек для кода из письма */
+.code-boxes{display:flex;justify-content:center;gap:8px}
+.code-box{
+  width:46px;height:56px;padding:0;text-align:center;
+  font:700 24px/1 "Montserrat";color:var(--text);
+  background:#0a143a99;border:1px solid #f5cc6333;border-radius:12px;outline:none;
+  caret-color:var(--gold-2);
+  transition:border-color .25s,box-shadow .25s,background .25s;
+}
+.code-box:hover{border-color:#f5cc6366}
+.code-box:focus{border-color:var(--gold-2);background:#0d1a46cc;box-shadow:0 0 0 4px #f5cc631f,0 0 24px -6px #f5cc6366}
+.sync-form .field.is-invalid .code-box{border-color:var(--error)}
+.sync-form .field[data-field="code"] .field__label{text-align:center;margin-left:0}
+.sync-form .field[data-field="code"] .field__error{text-align:center;margin-left:0}
+@media (max-width:420px){.code-boxes{gap:6px}.code-box{width:40px;height:50px;font-size:21px}}
+.sync-demo-hint{margin:0;text-align:center;font:500 12px/1.4 "Montserrat";color:#c9b37a;background:#f5cc6312;border:1px dashed #f5cc6340;border-radius:10px;padding:8px 10px}
+.sync-success__text{margin:14px auto 26px;max-width:300px;font:italic 500 20px/1.35 "Cormorant Garamond",serif;color:var(--text)}
+.sync-success__text b{font-style:normal;color:var(--gold-2);font-weight:600}
+@keyframes sync-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes sync-bloom{
+  0%{filter:drop-shadow(0 0 12px #f5cc6355)}
+  50%{filter:drop-shadow(0 0 30px #f5cc63cc);transform:scale(1.08)}
+  100%{filter:drop-shadow(0 0 16px #f5cc6377)}
+}
+
+/* незаметная кнопка сброса регистрации в шапке справа */
+.sync-reset{
+  position:absolute;top:8px;right:max(10px,env(safe-area-inset-right,0px));z-index:3;
+  width:26px;height:26px;padding:0;border:0;border-radius:50%;
+  display:grid;place-items:center;background:transparent;cursor:pointer;
+  color:currentColor;opacity:.22;transition:opacity .25s,background-color .25s;
+}
+.sync-reset svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sync-reset:hover,.sync-reset:focus-visible{opacity:.75;background:color-mix(in srgb,currentColor 10%,transparent);outline:none}
+.sync-reset.is-done{animation:sync-reset-spin .7s ease}
+.sync-reset.is-done svg{stroke:#2fc278}
+@keyframes sync-reset-spin{from{transform:rotate(0)}to{transform:rotate(-360deg)}}
+.bar{color:var(--bar-ink,var(--c))}
+.bar.is-cover .sync-reset{color:#efcf7f}
+
+@media (max-width:420px){.sync-modal__panel{padding:40px 22px 28px}}
+/* низкий экран (телефон боком): окно прокручивается внутри, без золотого свечения снизу */
+@media (max-height:720px){.sync-modal__panel{max-height:calc(100vh - 32px);overflow-y:auto}.sync-modal__panel::after{display:none}}
+@media (prefers-reduced-motion:reduce){
+  .sync-modal *,.sync-modal *::before,.sync-modal *::after,.sync-modal,.sync-modal__panel{animation:none!important;transition:none!important}
+}
