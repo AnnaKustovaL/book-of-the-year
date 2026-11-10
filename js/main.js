@@ -499,7 +499,8 @@
   }
   if (tocBtn) {
     tocBtn.addEventListener("click", function (e) { e.stopPropagation(); setToc(!tocBar.classList.contains("toc-open")); });
-    document.addEventListener("click", function (e) { if (tocBar.classList.contains("toc-open") && !nav.contains(e.target)) setToc(false); });
+    // нажатие в любом месте экрана мимо списка сворачивает его (pointerdown — на iPhone «click» по пустому месту не приходит)
+    document.addEventListener("pointerdown", function (e) { if (tocBar.classList.contains("toc-open") && !nav.contains(e.target) && !tocBtn.contains(e.target)) setToc(false); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && tocBar.classList.contains("toc-open")) { setToc(false); tocBtn.focus(); } });
     if (barTab) barTab.addEventListener("click", function () { setToc(false); });   // панель спрятали — список тоже
   }

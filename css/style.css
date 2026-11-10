@@ -358,7 +358,7 @@ body { background: transparent; }   /* фон страницы (и звёздн�
   min-height: calc(100vh - 82px);
   min-height: calc(100svh - 82px);
   display: flex;
-  /* пока видео грузится — его же первый кадр (img/cover-start.jpg, снят с 8-й секунды): цвета и сюжет
+  /* пока видео грузится — его же первый кадр (img/cover-start.jpg, первый кадр видео обложки): цвета и сюжет
      совпадают с видео, подмены не видно; синий — только до загрузки этой картинки */
   background: #0b1a33 url("../img/cover-start.jpg") 50% 28% / cover no-repeat;
   color: #ffffff;
@@ -1296,3 +1296,5 @@ em.u { font-style: italic; text-decoration: underline; text-underline-offset: 2p
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; scroll-behavior: auto !important; }
 }
+/* Телефон: без лотосов на заднем фоне */
+@media (max-width: 640px) { .lotus-veil { display: none; } }

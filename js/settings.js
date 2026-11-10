@@ -53,7 +53,8 @@
   });
 
   /* закрыть по клику мимо панели или по Esc */
-  document.addEventListener("click", function (e) { if (!panel.hidden && !box.contains(e.target)) setOpen(false); });
+  // нажатие в любом месте экрана мимо окошка сворачивает его (pointerdown — на iPhone «click» по пустому месту не приходит)
+  document.addEventListener("pointerdown", function (e) { if (!panel.hidden && !box.contains(e.target)) setOpen(false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !panel.hidden) { setOpen(false); btn.focus(); } });
 
   /* на случай, если ранний скрипт в <head> не сработал */
