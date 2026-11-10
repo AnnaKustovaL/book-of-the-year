@@ -469,17 +469,44 @@
   }
 
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var navLock = false, navLockT = 0;
+  function unlockNav() { navLock = false; }
+  // прокрутка закончилась — снова следим за тем, какой раздел на экране
+  window.addEventListener("scrollend", function () { if (navLock) { clearTimeout(navLockT); navLockT = setTimeout(unlockNav, 80); } });
   chips.forEach(function (a) {
     a.addEventListener("click", function (e) {
       var target = document.querySelector(a.getAttribute("href"));
       if (!target) return;
       e.preventDefault();
-      target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+      // выбранный раздел подсвечивается сразу, а не когда до него докрутится страница;
+      // пока страница переходит к разделу, другие разделы подсветку не перехватывают
+      setActive(a.dataset.stage);
+      navLock = true;
+      clearTimeout(navLockT);
+      navLockT = setTimeout(unlockNav, 300);
+      target.scrollIntoView({ behavior: "instant", block: "start" });   // сразу на нужную страницу, без прокрутки
+      setToc(false);   // на телефоне список «Содержание» закрывается после выбора раздела
     });
   });
 
+  /* 2а. Телефон: кнопка «Содержание» раскрывает список разделов (стили — css/style.css) */
+  var tocBtn = document.querySelector(".toc-btn");
+  var tocBar = tocBtn && tocBtn.closest(".bar");
+  function setToc(open) {
+    if (!tocBtn) return;
+    tocBar.classList.toggle("toc-open", open);
+    tocBtn.setAttribute("aria-expanded", String(open));
+  }
+  if (tocBtn) {
+    tocBtn.addEventListener("click", function (e) { e.stopPropagation(); setToc(!tocBar.classList.contains("toc-open")); });
+    document.addEventListener("click", function (e) { if (tocBar.classList.contains("toc-open") && !nav.contains(e.target)) setToc(false); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && tocBar.classList.contains("toc-open")) { setToc(false); tocBtn.focus(); } });
+    if (barTab) barTab.addEventListener("click", function () { setToc(false); });   // панель спрятали — список тоже
+  }
+
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(function (entries) {
+      if (navLock) return;   // идёт переход по нажатию на раздел — подсветка уже стоит на выбранном
       entries.forEach(function (en) { if (en.isIntersecting) setActive(en.target.dataset.stage); });
     }, { rootMargin: "-25% 0px -65% 0px" });
     document.querySelectorAll("[data-stage].intro, [data-stage].sheet").forEach(function (s) { io.observe(s); });

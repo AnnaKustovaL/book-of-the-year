@@ -3,18 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0b1a33" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0d120e" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="only light">
+  <meta name="theme-color" content="#0b1a33">
   <title>Книга года</title>
   <link rel="icon" href="img/favicon.svg?v=2" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;800&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;800&family=Great+Vibes&family=Bad+Script&family=Amatic+SC:wght@700&family=Underdog&family=Marmelad&family=Pacifico&family=Pattaya&family=Lobster&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
   <link rel="preload" href="fonts/URWGothic-Book.otf" as="font" type="font/otf" crossorigin>
   <!-- первый кадр видео грузится первым: виден сразу, пока подгружается видео -->
   <link rel="preload" href="img/cover-start.jpg" as="image" fetchpriority="high">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/sync.css">
+  <link rel="stylesheet" href="css/settings.css">
+  <script>try{var h=localStorage.getItem("kniga-goda:v1:hand"),p=localStorage.getItem("kniga-goda:v1:pen");if(h)document.documentElement.setAttribute("data-hand",h);if(p)document.documentElement.setAttribute("data-pen",p)}catch(e){}</script>
 </head>
 <body>
 
@@ -59,6 +61,8 @@
 <header class="bar">
   <div class="wrap">
     <span class="bar-title">КНИГА ГОДА</span>
+    <!-- телефон: кнопка «Содержание» открывает список разделов вместо ленты кнопок (css/style.css, js/main.js) -->
+    <button class="toc-btn" type="button" aria-expanded="false" aria-controls="chips"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>Содержание</span><svg class="toc-caret" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>
     <nav class="chips" id="chips" aria-label="Этапы книги">
       <a class="chip stage-intro" href="#top" data-stage="intro"><span class="chip-n">Начало</span></a>
       <a class="chip stage-finance" href="#p3" data-stage="finance"><span class="chip-n">01</span><span class="chip-t">Финансовый итог</span></a>
@@ -73,7 +77,33 @@
       <a class="chip stage-notes" href="#p84" data-stage="notes"><span class="chip-n">10</span><span class="chip-t">Заметки</span></a>
     </nav>
   </div>
-  <!-- незаметная кнопка: сбросить регистрацию (для демонстрации), js/sync.js -->
+  <!-- настройки письма: шрифт ответов и цвет ручки (css/settings.css, js/settings.js) -->
+  <div class="pen-set">
+    <button class="pen-set__btn" type="button" aria-expanded="false" aria-controls="pen-panel" aria-label="Настройки" title="Настройки"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="pen-set__label">Настройки</span></button>
+    <div class="pen-panel" id="pen-panel" hidden>
+      <p class="pen-panel__title">Настройки письма</p>
+      <div class="pen-panel__tabs">
+        <button class="pen-tab" type="button" data-tab="font" aria-expanded="false">Выбор шрифта</button>
+        <button class="pen-tab" type="button" data-tab="color" aria-expanded="false">Цвет ручки</button>
+      </div>
+      <div class="pen-list" data-list="font" role="menu" aria-label="Шрифт ответов" hidden>
+          <button class="pen-opt" type="button" role="menuitemradio" data-hand="badscript"><span class="pen-opt__sample">Мой год был особенным</span><span class="pen-opt__check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+          <button class="pen-opt" type="button" role="menuitemradio" data-hand="cormorant"><span class="pen-opt__sample">Мой год был особенным</span><span class="pen-opt__check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+          <button class="pen-opt" type="button" role="menuitemradio" data-hand="amatic"><span class="pen-opt__sample">Мой год был особенным</span><span class="pen-opt__check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+          <button class="pen-opt" type="button" role="menuitemradio" data-hand="underdog"><span class="pen-opt__sample">Мой год был особенным</span><span class="pen-opt__check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+          <button class="pen-opt" type="button" role="menuitemradio" data-hand="marmelad"><span class="pen-opt__sample">Мой год был особенным</span><span class="pen-opt__check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+          <button class="pen-opt" type="button" role="menuitemradio" data-hand="pacifico"><span class="pen-opt__sample">Мой год был особенным</span><span class="pen-opt__check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+          <button class="pen-opt" type="button" role="menuitemradio" data-hand="pattaya"><span class="pen-opt__sample">Мой год был особенным</span><span class="pen-opt__check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+          <button class="pen-opt" type="button" role="menuitemradio" data-hand="lobster"><span class="pen-opt__sample">Мой год был особенным</span><span class="pen-opt__check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+      </div>
+      <div class="pen-list" data-list="color" role="menu" aria-label="Цвет ручки" hidden>
+          <button class="pen-opt" type="button" role="menuitemradio" data-pen="black"><span class="pen-dot"></span><span class="pen-opt__name">Чёрная<i>Мой год</i></span><span class="pen-opt__check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+          <button class="pen-opt" type="button" role="menuitemradio" data-pen="blue"><span class="pen-dot"></span><span class="pen-opt__name">Синяя<i>Мой год</i></span><span class="pen-opt__check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+          <button class="pen-opt" type="button" role="menuitemradio" data-pen="gel"><span class="pen-dot"></span><span class="pen-opt__name">Синяя гелевая<i>Мой год</i></span><span class="pen-opt__check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+          <button class="pen-opt" type="button" role="menuitemradio" data-pen="violet"><span class="pen-dot"></span><span class="pen-opt__name">Фиолетовая<i>Мой год</i></span><span class="pen-opt__check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+      </div>
+    </div>
+  </div>  <!-- незаметная кнопка: сбросить регистрацию (для демонстрации), js/sync.js -->
   <button class="sync-reset" type="button" aria-label="Сбросить регистрацию" title="Сбросить регистрацию"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 4.5v3.8h3.8"/></svg></button>
   <!-- закладка: прячет/вытягивает панель разделов (js/main.js) -->
   <button class="bar-tab" type="button" aria-expanded="true" aria-controls="chips" aria-label="Скрыть панель разделов"><svg class="tab-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 14.5l6-6 6 6"/></svg><svg class="tab-lotus" aria-hidden="true"><use href="#lotus"/></svg></button>
@@ -2432,7 +2462,7 @@
             <label class="field__label" for="syncEmail">Электронная почта</label>
             <div class="field__wrap">
               <svg class="field__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg>
-              <input class="field__input" id="syncEmail" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Например, anna@mail.ru" required>
+              <input class="field__input" id="syncEmail" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Например, anna@gmail.com" required>
             </div>
             <p class="field__error">Проверьте почту — похоже, в адресе опечатка</p>
           </div>
@@ -2451,7 +2481,7 @@
             <label class="field__label" for="syncLoginEmail">Электронная почта</label>
             <div class="field__wrap">
               <svg class="field__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg>
-              <input class="field__input" id="syncLoginEmail" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Например, anna@mail.ru" required>
+              <input class="field__input" id="syncLoginEmail" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Например, anna@gmail.com" required>
             </div>
             <p class="field__error">Проверьте почту — похоже, в адресе опечатка</p>
           </div>
@@ -2489,6 +2519,8 @@
   </div>
 </div>
 <script src="js/sync.js"></script>
+<script src="js/cloud.js"></script>
+<script src="js/settings.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

@@ -230,7 +230,7 @@
 
 /* незаметная кнопка сброса регистрации в шапке справа */
 .sync-reset{
-  position:absolute;top:8px;right:max(10px,env(safe-area-inset-right,0px));z-index:3;
+  position:absolute;top:8px;left:50%;translate:-50% 0;z-index:3;   /* по центру шапки (translate, чтобы не мешать вращению при сбросе) */
   width:26px;height:26px;padding:0;border:0;border-radius:50%;
   display:grid;place-items:center;background:transparent;cursor:pointer;
   color:currentColor;opacity:.22;transition:opacity .25s,background-color .25s;
@@ -249,3 +249,32 @@
 @media (prefers-reduced-motion:reduce){
   .sync-modal *,.sync-modal *::before,.sync-modal *::after,.sync-modal,.sync-modal__panel{animation:none!important;transition:none!important}
 }
+
+/* ===== «Вы остановились на N-й странице — Продолжить» (js/cloud.js) =====
+   Появляется внизу экрана при открытии сайта; стекло, как меню «Содержание» на обложке. */
+.resume{
+  position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:40;
+  display:flex;align-items:center;gap:10px;max-width:calc(100vw - 24px);
+  padding:8px 8px 8px 18px;border-radius:999px;
+  background:linear-gradient(180deg,rgba(30,48,86,.62),rgba(10,22,46,.55));
+  -webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
+  border:1px solid rgba(255,255,255,.2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 14px 40px rgba(0,0,0,.35);
+  color:#eef2f8;font:500 14px/1.25 Montserrat,sans-serif;
+  translate:-50% 140%;opacity:0;transition:translate .35s cubic-bezier(.2,.8,.2,1),opacity .35s;
+}
+.resume.is-in{translate:-50% 0;opacity:1}
+.resume__txt b{font-weight:600;color:#efcf7f}
+.resume__go{
+  flex:none;height:36px;padding:0 18px;border-radius:18px;cursor:pointer;
+  border:1px solid #c99a3e;color:#2a1a05;font:600 13px Montserrat,sans-serif;
+  background:linear-gradient(180deg,#fbe9b0 0%,#e9bf5c 48%,#b9842c 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
+}
+.resume__go:hover{filter:brightness(1.05)}
+.resume__x{flex:none;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;cursor:pointer;display:grid;place-items:center;opacity:.7}
+.resume__x:hover{opacity:1;background:rgba(255,255,255,.12)}
+.resume__x svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.resume{background:rgba(15,31,61,.96)}}
+@media (max-width:420px){.resume{font-size:13px;padding-left:14px;gap:6px}.resume__go{padding:0 14px}}
+@media (prefers-reduced-motion:reduce){.resume{transition:none}}

@@ -1,0 +1,147 @@
+/* ===== Настройки письма: шрифт ответов и цвет ручки (js/settings.js) =====
+   Выбор хранится в localStorage и ставится на <html> как data-hand / data-pen.
+   Те же атрибуты стоят на кнопках-вариантах, поэтому образец в меню выглядит ровно как в полях. */
+
+/* почерк по умолчанию — Bad Script */
+:root{
+  --hand-font:"Bad Script","Marck Script",cursive; --hand-style:normal; --hand-w:400; --hand-pt:15; --hand-min:18px;
+  --pen:#1c1c1c;
+}
+[data-hand="cormorant"]{--hand-font:"Cormorant Garamond",serif;--hand-style:italic;--hand-w:500;--hand-pt:16;--hand-min:19px}
+[data-hand="amatic"]   {--hand-font:"Amatic SC",cursive;--hand-style:normal;--hand-w:700;--hand-pt:17;--hand-min:20px}
+[data-hand="underdog"] {--hand-font:"Underdog",cursive;--hand-style:normal;--hand-w:400;--hand-pt:14;--hand-min:17px}
+[data-hand="marmelad"] {--hand-font:"Marmelad",sans-serif;--hand-style:normal;--hand-w:400;--hand-pt:14;--hand-min:17px}
+[data-hand="pacifico"] {--hand-font:"Pacifico",cursive;--hand-style:normal;--hand-w:400;--hand-pt:12.5;--hand-min:15px}
+[data-hand="pattaya"]  {--hand-font:"Pattaya",sans-serif;--hand-style:normal;--hand-w:400;--hand-pt:14;--hand-min:17px}
+[data-hand="lobster"]  {--hand-font:"Lobster",cursive;--hand-style:normal;--hand-w:400;--hand-pt:14;--hand-min:17px}
+[data-hand="badscript"]{--hand-font:"Bad Script","Marck Script",cursive;--hand-style:normal;--hand-w:400;--hand-pt:15;--hand-min:18px}
+
+/* цвета ручки */
+[data-pen="black"] {--pen:#1c1c1c}   /* чёрная */
+[data-pen="blue"]  {--pen:#1f3a93}   /* обычная синяя шариковая */
+[data-pen="gel"]   {--pen:#0d5bdc}   /* синяя гелевая — ярче и насыщеннее */
+[data-pen="violet"]{--pen:#5b2d9c}   /* фиолетовая */
+
+/* ---- кнопка «Настройки» — в правом углу шапки, на одной линии с кнопками разделов и в их стиле ---- */
+.pen-set{position:absolute;top:29px;right:max(16px,env(safe-area-inset-right,0px));z-index:4}
+.pen-set__btn{
+  height:34px;min-width:34px;padding:0 14px 0 11px;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;
+  border:1px solid var(--rule);border-radius:17px;
+  color:var(--bar-ink,var(--text));
+  font:500 .76rem var(--font-display);letter-spacing:.03em;white-space:nowrap;
+  /* объёмная, как чипы разделов */
+  background:linear-gradient(180deg,color-mix(in srgb,#fff 70%,transparent),color-mix(in srgb,#fff 15%,transparent) 55%,color-mix(in srgb,#000 5%,transparent)),#fbfaf6;   /* + плотная подложка: кнопки разделов, прокручиваясь, уходят под неё */
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 1px 3px rgba(0,0,0,.04);
+  transition:color .45s,border-color .45s,box-shadow .25s,background-color .25s;
+}
+.pen-set__btn svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .5s ease}
+.pen-set__btn:hover svg{transform:rotate(45deg)}
+.pen-set__btn[aria-expanded="true"] svg{transform:rotate(90deg)}
+.pen-set__btn:focus-visible{outline:2px solid color-mix(in srgb,var(--bar-ink,#c7a35a) 50%,transparent);outline-offset:2px}
+/* на страницах книги: при наведении и открытой панели — цвет текущего раздела, как у открытого чипа */
+.pen-set__btn:hover,.pen-set__btn[aria-expanded="true"]{
+  border-color:color-mix(in srgb,var(--bar-ink,#2e8560) 55%,var(--rule));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 2px 8px color-mix(in srgb,var(--bar-ink,#2e8560) 22%,transparent);
+}
+/* на обложке — стеклянная, как чипы, с золотой шестерёнкой; при наведении — золото, как «Начало» */
+.bar.is-cover .pen-set__btn{
+  color:rgba(235,242,250,.92);border-color:rgba(255,255,255,.22);
+  background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.03) 55%,rgba(0,0,0,.12)),#0f1f3d;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 1px 3px rgba(0,0,0,.12),-10px 0 10px -2px rgba(11,26,51,.85);   /* мягкая тень слева прячет край чипа под кнопкой */
+}
+.bar.is-cover .pen-set__btn svg{color:#efcf7f}
+.bar.is-cover .pen-set__btn:hover,.bar.is-cover .pen-set__btn[aria-expanded="true"]{
+  background:linear-gradient(180deg,#fbe9b0 0%,#e9bf5c 48%,#b9842c 100%);border-color:#c99a3e;color:#2a1a05;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 1px 6px rgba(3,8,26,.35);
+}
+.bar.is-cover .pen-set__btn:hover svg,.bar.is-cover .pen-set__btn[aria-expanded="true"] svg{color:#2a1a05}
+/* узкий экран: только шестерёнка, чтобы не закрывать кнопки разделов */
+@media (max-width:640px){.pen-set__btn{padding:0;width:34px}.pen-set__label{display:none}}
+
+/* ---- выпадающая панель ---- */
+.pen-panel{
+  position:absolute;top:42px;right:0;width:min(320px,calc(100vw - 20px));
+  padding:12px;border-radius:14px;background:#fffdf8;color:#2b2b2b;
+  border:1px solid rgba(199,163,90,.45);
+  box-shadow:0 14px 40px rgba(11,26,51,.22),0 2px 6px rgba(11,26,51,.08);
+  font-family:Montserrat,sans-serif;font-size:13px;
+  animation:pen-in .18s ease-out;
+}
+.pen-panel[hidden]{display:none}
+@keyframes pen-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.pen-panel__title{margin:0 2px 8px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#a07f3c}
+.pen-panel__tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pen-tab{
+  padding:9px 8px;border:1px solid #e3d8c2;border-radius:10px;background:#fff;color:#2b2b2b;
+  font:500 13px/1.2 Montserrat,sans-serif;cursor:pointer;transition:background-color .2s,border-color .2s;
+}
+.pen-tab:hover{border-color:#c7a35a}
+.pen-tab[aria-expanded="true"]{background:#f6eedc;border-color:#c7a35a}
+.pen-list{margin-top:10px;display:grid;grid-template-columns:minmax(0,1fr);gap:4px;max-height:min(60vh,420px);overflow-y:auto;overflow-x:hidden}
+.pen-list[hidden]{display:none}
+
+/* вариант шрифта: образец письма выбранным цветом ручки */
+.pen-opt{
+  display:flex;align-items:center;gap:10px;width:100%;padding:6px 10px;
+  border:1px solid transparent;border-radius:10px;background:transparent;cursor:pointer;text-align:left;color:inherit;
+}
+.pen-opt:hover{background:#faf5ea}
+.pen-opt[aria-checked="true"]{border-color:#c7a35a;background:#f6eedc}
+.pen-opt__sample{
+  flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-family:var(--hand-font);font-style:var(--hand-style);font-weight:var(--hand-w);
+  font-size:calc(var(--hand-min) + 1px);line-height:1.5;color:var(--pen);
+}
+.pen-opt__check{width:16px;flex:none;color:#a07f3c;opacity:0}
+.pen-opt[aria-checked="true"] .pen-opt__check{opacity:1}
+.pen-opt__check svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* вариант цвета: кружок-капля + название */
+.pen-dot{width:22px;height:22px;flex:none;border-radius:50%;background:var(--pen);box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+.pen-opt__name{flex:1;font:500 13px/1.3 Montserrat,sans-serif}
+.pen-opt__name i{display:block;font-style:var(--hand-style);font-family:var(--hand-font);font-weight:var(--hand-w);font-size:var(--hand-min);color:var(--pen);line-height:1.4}
+
+@media (prefers-reduced-motion:reduce){.pen-panel{animation:none}.pen-set__btn{transition:none}}
+/* последний чип раздела можно прокрутить из-под кнопки настроек */
+.bar .chips{padding-right:calc(16px + 150px)}
+
+
+/* Телефон: окошко «Настройки письма» — матовое стекло, как меню «Содержание» и меню в iPhone */
+@media (max-width:640px){
+  .pen-panel{
+    background:linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,255,255,.42));
+    -webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
+    border:1px solid rgba(255,255,255,.55);border-radius:18px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 14px 40px rgba(11,26,51,.22),0 2px 6px rgba(11,26,51,.08);
+  }
+  /* на обложке — тёмно-синее стекло, точь-в-точь как у списка «Содержание»; кнопки — стеклянные чипы,
+     выбранная — золото, как «Начало»; варианты — светлые «таблетки», чтобы цвет ручки читался */
+  .bar.is-cover .pen-panel{
+    background:linear-gradient(180deg,rgba(30,48,86,.48),rgba(10,22,46,.38));
+    border-color:rgba(255,255,255,.2);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 14px 40px rgba(0,0,0,.45);
+    color:#eef2f8;
+  }
+  .bar.is-cover .pen-panel__title{color:#efcf7f}
+  .bar.is-cover .pen-tab{
+    color:rgba(235,242,250,.92);border-color:rgba(255,255,255,.22);
+    background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.03) 55%,rgba(0,0,0,.12));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.15);
+  }
+  .bar.is-cover .pen-tab[aria-expanded="true"]{background:linear-gradient(180deg,#fbe9b0 0%,#e9bf5c 48%,#b9842c 100%);border-color:#c99a3e;color:#2a1a05}
+  .bar.is-cover .pen-opt{background:rgba(255,255,255,.84);color:#2b2b2b}
+  .bar.is-cover .pen-opt[aria-checked="true"]{background:rgba(251,240,214,.95);border-color:#e9bf5c}
+  .pen-tab{border-radius:17px}
+  .pen-opt{border-radius:20px;padding:6px 14px}
+  .pen-tab{background:rgba(255,255,255,.55);border-color:rgba(160,127,60,.28)}
+  .pen-tab[aria-expanded="true"]{background:rgba(246,238,220,.75)}
+  .pen-opt:hover{background:rgba(255,255,255,.45)}
+  .pen-opt[aria-checked="true"]{background:rgba(246,238,220,.7)}
+  /* размытие самой шапки мешает стеклу окошка видеть страницу — пока окошко открыто, отключаем */
+  .bar:has(.pen-panel:not([hidden])){-webkit-backdrop-filter:none;backdrop-filter:none}
+  @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+    .pen-panel{background:rgba(255,253,248,.97)}
+    .bar.is-cover .pen-panel{background:rgba(15,31,61,.96)}
+  }
+}

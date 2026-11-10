@@ -23,32 +23,7 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --ground: #0d120e;
-    --paper: #151d16;
-    --block: #1d271f;
-    --soft: #2a372c;
-    --ink: #eef3ea;
-    --text: #bccbbd;
-    --rule: #46564a;
-    --dot: #5b6c5f;
-    --on-accent: #0d120e;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --ground: #0d120e;
-  --paper: #151d16;
-  --block: #1d271f;
-  --soft: #2a372c;
-  --ink: #eef3ea;
-  --text: #bccbbd;
-  --rule: #46564a;
-  --dot: #5b6c5f;
-  --on-accent: #0d120e;
-  color-scheme: dark;
-}
+/* сайт всегда в светлой теме: цвета не подстраиваются под день/ночь телефона или ноутбука */
 
 /* ---------- Цвета этапов (как в книге) ---------- */
 .stage-intro    { --c: #2e8560; --bg-c: #1b6fe0; } /* вступление (обложка и стр. 0–2); --bg-c — синий картины обложки для фона за листами */
@@ -65,19 +40,15 @@
 .stage-extra3   { --c: #db19ff; --bg-c: #d84cf5; } /* доп. материал №3 — радикальное прощение (фуксия) */
 .stage-extra4   { --c: #bc1235; --bg-c: #e0405f; } /* доп. материал №4 — ревизия пространства (малиновый) */
 .stage-notes    { --c: #25ac39; --bg-c: #2fc278; } /* заметки (зелёный, как в книге) */
-/* акцент; в тёмной теме — светлее */
+/* акцент */
 .chip, .intro, .sheet { --acc: var(--c); }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) :is(.chip, .sheet) { --acc: color-mix(in srgb, var(--c) 55%, #ffffff); }
-}
-:root[data-theme="dark"] :is(.chip, .sheet) { --acc: color-mix(in srgb, var(--c) 55%, #ffffff); }
 
 /* Плавная смена цвета шапки при переходе между разделами: цвета раздела (--bar-c — фон,
    --bar-ink — надпись, закладка, полоска) объявлены как цвета и перетекают за 0,45 с,
    поэтому плавно меняются и градиенты закладки/полоски, а не только фон */
 @property --bar-c   { syntax: "<color>"; inherits: true; initial-value: #2fc278; }
 @property --bar-ink { syntax: "<color>"; inherits: true; initial-value: #2e8560; }
-:root { transition: --bar-c .45s ease-in-out, --bar-ink .45s ease-in-out; }
+:root { transition: --bar-c .25s ease-out, --bar-ink .25s ease-out; }
 /* ---------- База ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-padding-top: 112px; }
@@ -110,7 +81,7 @@ img { max-width: 100%; }
   background-color: color-mix(in oklab, var(--bar-c, #2fc278) var(--tint-k, 20%), var(--ground));
   border-bottom: 0;   /* без нижней линии */
   box-shadow: inset 0 -6px 8px -6px rgba(0, 0, 0, .12);   /* лёгкая тень внутри панели у нижнего края */
-  transition: background-color .45s ease-in-out;   /* фон панели при переходе обложка ↔ разделы */
+  transition: background-color .25s ease-out;   /* фон панели при переходе обложка ↔ разделы */
 }
 /* глава «Начало»: градиент из синих картины обложки (замерены по img/cover-bg.jpg),
    золотые надпись и выбранный чип; уход в другой этап — плавное растворение */
@@ -121,7 +92,7 @@ img { max-width: 100%; }
   z-index: -1;
   background: linear-gradient(90deg, #13243a 0%, #152b46 40%, #0e4973 78%, #326887 100%);
   opacity: 0;
-  transition: opacity .45s ease-in-out;
+  transition: opacity .25s ease-out;
   pointer-events: none;
 }
 .bar.is-cover::before { opacity: 1; }
@@ -155,7 +126,7 @@ img { max-width: 100%; }
 
 /* Закладка-ленточка под панелью слева: прячет панель (стрелка вверх) и вытягивает обратно
    (стрелка вниз). Панель уезжает вверх, закладка едет вместе с ней и остаётся видна. */
-.bar { transition: transform .45s cubic-bezier(.4, 0, .2, 1), background-color .45s ease-in-out; }   /* цвет раздела перетекает через --bar-c (см. @property) */
+.bar { transition: transform .45s cubic-bezier(.4, 0, .2, 1), background-color .25s ease-out; }   /* цвет раздела перетекает через --bar-c (см. @property) */
 .bar.is-hidden { transform: translateY(calc(-100% - 3px)); border-bottom-color: transparent; }   /* без светлой линии у верхнего края */
 /* Когда панель спрятана, над обложкой остаётся полоса её высоты. Заполняем её переходом:
    тёмно-синий верх картины плавно растворяется вверх в фон страницы (как внизу обложки).
@@ -236,6 +207,14 @@ body { background: transparent; }   /* фон страницы (и звёздн�
   filter: drop-shadow(0 1px 4px rgba(0, 0, 0, .35));
 }
 @media (prefers-reduced-motion: reduce) { .bar, .bar-tab svg { transition: none; } }
+/* Телефон: закладка уже и короче и прижата к самому краю экрана — висит на поле слева от текста
+   (текст начинается примерно с 30px), поэтому не закрывает его */
+@media (max-width: 640px) {
+  .bar-tab { left: max(2px, env(safe-area-inset-left, 0px)); width: 26px; height: 60px; padding: 0 0 17px; justify-content: flex-end; }   /* стрелка внизу, над вырезом */
+  .bar-tab:hover, .bar-tab:focus-visible { height: 64px; }
+  .bar-tab svg { width: 14px; height: 14px; stroke-width: 2.6; }
+  .bar-tab .tab-lotus { display: none; }   /* на телефоне — только стрелка, без лотоса */
+}
 .bar.is-cover .bar-title { color: #efcf7f; }
 .bar.is-cover .chip {
   color: rgba(235, 242, 250, .9);
@@ -272,7 +251,7 @@ body { background: transparent; }   /* фон страницы (и звёздн�
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: padding .35s ease, color .8s ease, border-color .8s ease, background-color .8s ease;
+  transition: padding .2s ease-out, color .15s ease, border-color .15s ease, background-color .15s ease;   /* смена выбранного раздела — сразу */
   border: 1px solid var(--rule);
   border-radius: 17px;
   color: var(--text);
@@ -303,10 +282,71 @@ body { background: transparent; }   /* фон страницы (и звёздн�
   overflow: hidden;
   opacity: 0;
   vertical-align: bottom;
-  transition: max-width .45s ease, opacity .3s ease, margin .45s ease;
+  transition: max-width .25s ease-out, opacity .15s ease-out, margin .25s ease-out;
 }
 .chip[aria-current="true"] .chip-t { max-width: 18em; opacity: 1; margin-left: .45em; }
 .chip:hover .chip-t, .chip:focus-visible .chip-t { max-width: 18em; opacity: 1; margin-left: .45em; }   /* при наведении название видно и у свёрнутых */
+
+/* ---------- Телефон: «Содержание» вместо ленты разделов ----------
+   Слева в шапке кнопка «Содержание» (в стиле чипов); по нажатию под ней раскрывается
+   список всех разделов с номерами и названиями. Те же чипы, что на компьютере (js/main.js). */
+.toc-btn { display: none; }
+@media (max-width: 640px) {
+  .toc-btn {
+    align-self: flex-start;
+    height: 34px; padding: 0 12px 0 11px;
+    display: inline-flex; align-items: center; gap: 7px; cursor: pointer;
+    border: 1px solid var(--rule); border-radius: 17px;
+    color: var(--bar-ink, var(--text));
+    font: 500 .76rem var(--font-display); letter-spacing: .03em; white-space: nowrap;
+    background: linear-gradient(180deg, color-mix(in srgb, #fff 70%, transparent), color-mix(in srgb, #fff 15%, transparent) 55%, color-mix(in srgb, #000 5%, transparent)), #fbfaf6;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 1px 3px rgba(0, 0, 0, .04);
+  }
+  .toc-btn svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .toc-btn .toc-caret { width: 14px; height: 14px; margin-left: -2px; transition: transform .3s ease; }
+  .bar.toc-open .toc-btn .toc-caret { transform: rotate(180deg); }
+  .bar.is-cover .toc-btn {
+    color: rgba(235, 242, 250, .92); border-color: rgba(255, 255, 255, .22);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .03) 55%, rgba(0, 0, 0, .12)), #0f1f3d;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 3px rgba(0, 0, 0, .12);
+  }
+  .bar.is-cover .toc-btn svg:first-child { color: #efcf7f; }
+  .bar.toc-open .toc-btn { border-color: color-mix(in srgb, var(--bar-ink, #2e8560) 55%, var(--rule)); }
+  .bar.is-cover.toc-open .toc-btn { background: linear-gradient(180deg, #fbe9b0 0%, #e9bf5c 48%, #b9842c 100%); border-color: #c99a3e; color: #2a1a05; }
+  .bar.is-cover.toc-open .toc-btn svg:first-child { color: #2a1a05; }
+
+  /* список разделов: выпадает под шапкой, слева */
+  .bar .wrap .chips {
+    position: absolute; top: calc(100% + 6px); left: max(10px, env(safe-area-inset-left, 0px)); z-index: 6;
+    width: min(300px, calc(100vw - 20px)); max-height: min(70vh, 520px); overflow-y: auto;
+    margin: 0; padding: 10px;
+    display: none; flex-direction: column; gap: 5px;
+    /* матовое стекло, как меню в iPhone: полупрозрачный фон + размытие того, что под ним */
+    background: linear-gradient(180deg, rgba(255, 255, 255, .62), rgba(255, 255, 255, .42));
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    backdrop-filter: blur(22px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, .55); border-radius: 18px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 14px 40px rgba(11, 26, 51, .22), 0 2px 6px rgba(11, 26, 51, .08);
+  }
+  .bar.is-cover .wrap .chips {
+    background: linear-gradient(180deg, rgba(30, 48, 86, .48), rgba(10, 22, 46, .38));
+    border-color: rgba(255, 255, 255, .2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18), 0 14px 40px rgba(0, 0, 0, .45);
+  }
+  /* размытие самой шапки мешает стеклу списка видеть страницу под ним — пока список открыт, отключаем */
+  .bar.toc-open { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  /* старые браузеры без размытия — фон плотнее, чтобы текст читался */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .bar .wrap .chips { background: rgba(251, 250, 246, .97); }
+    .bar.is-cover .wrap .chips { background: rgba(15, 31, 61, .96); }
+  }
+  .bar.toc-open .wrap .chips { display: flex; animation: toc-in .18s ease-out; }
+  @keyframes toc-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .bar .chips .chip { width: 100%; height: 40px; border-radius: 20px; justify-content: flex-start; padding: 0 14px; }
+  .bar .chips .chip-n { min-width: 2.2em; }
+  .bar .chips .chip-t { max-width: none; opacity: 1; margin-left: .3em; }
+  .bar .chips .chip[aria-current="true"] { padding: 0 14px; }
+}
 
 /* ---------- Обложка ---------- */
 /* Обложка на всю ширину: видео (ночная картина с кистью) + светлый текст, как на обложке книги.
@@ -383,8 +423,6 @@ body:has(.bar.over-cover) .lotus-veil { opacity: 0; }
    позициям листов (зелёный этап → синий этап и т. д.). Начинается там, где кончается
    переход от обложки (340px — нахлёст .intro-fade), тем же оттенком — без шва. */
 :root { --tint-k: 20%; }                                   /* насколько заметен оттенок этапа */
-:root[data-theme="dark"] { --tint-k: 24%; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --tint-k: 24%; } }
 body { overflow-x: clip; }                                 /* слой шириной 100vw не даёт горизонтальной прокрутки */
 .pages-bg {
   position: absolute;
@@ -563,8 +601,6 @@ main.wrap { container-type: inline-size; }
   color: var(--ink);
   font: 400 calc(12 * var(--fpt)) / calc(15.3 * var(--fpt)) var(--font-book);   /* 12 / 15,3 pt */
 }
-:root[data-theme="dark"] .sheet { --dot-c: var(--dot); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sheet { --dot-c: var(--dot); } }
 
 /* поток страницы: всё, кроме подвала. flow-root — чтобы подпись шага обтекалась;
    по вертикали обрезает «хвост» поля ответа (см. .lines) */
@@ -772,8 +808,6 @@ main.wrap { container-type: inline-size; }
   .bw-d { display: none; }
   .bw-h { font-size: 10px; }
 }
-:root[data-theme="dark"] .bw-outer, :root[data-theme="dark"] .bw-spoke { stroke: #9fc3a2; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bw-outer, :root:not([data-theme="light"]) .bw-spoke { stroke: #9fc3a2; } }
 
 /* ---------- Стр. 44 ----------
    рамка для главного слова года (пунктир, как в книге, ~317 × 38 pt),
@@ -870,8 +904,6 @@ main.wrap { container-type: inline-size; }
   background: #ffffff;
   image-rendering: pixelated;
 }
-:root[data-theme="dark"] .media-qr { padding: 6px; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .media-qr { padding: 6px; } }
 
 /* ---------- Стр. 45–47 (Древо желаний) ---------- */
 .title-art .sub { opacity: .9; }                         /* «Первый день» под заголовком этапа */
@@ -1132,8 +1164,6 @@ em.u { font-style: italic; text-decoration: underline; text-underline-offset: 2p
 .final-link:hover .final-qr, .final-link:focus-visible .final-qr { outline: 2px solid var(--acc); outline-offset: 6px; }
 .final-link:hover .final-handle { color: var(--acc); }
 .final-handle { margin: 0; color: #444444; font: 400 calc(14 * var(--fpt)) var(--font-display); letter-spacing: .04em; }
-:root[data-theme="dark"] .final-handle { color: var(--ink); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .final-handle { color: var(--ink); } }
 
 /* итоговый абзац внизу страницы, над подвалом (стр. 13) */
 .tx-end { margin: calc(8 * var(--fpt)) 0 0; text-align: justify; text-align-last: left; }
@@ -1168,6 +1198,12 @@ em.u { font-style: italic; text-decoration: underline; text-underline-offset: 2p
   margin: calc(6 * var(--fpt)) 0 -9999px;
   padding: 0 0 9999px;
   line-height: var(--pitch);
+  /* ответы пишутся рукописным шрифтом и цветом ручки из настроек (css/settings.css, по умолчанию Bad Script, чёрная) */
+  font-family: var(--hand-font, "Bad Script", cursive);
+  font-style: var(--hand-style, normal);
+  font-weight: var(--hand-w, 400);
+  font-size: max(var(--hand-min, 18px), calc(var(--hand-pt, 15) * var(--fpt)));
+  color: var(--pen, #1c1c1c);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   outline: none;
@@ -1238,6 +1274,24 @@ em.u { font-style: italic; text-decoration: underline; text-underline-offset: 2p
 .even .pf-num { margin-left: calc(16 * var(--pt)); }
 .pf-num b { font-size: 1.5em; font-weight: 400; }
 .pf-logo { flex: none; width: calc(48 * var(--fpt)); height: calc(32.4 * var(--fpt)); margin-bottom: calc(-9.6 * var(--fpt)); color: var(--acc); }
+/* Телефон: в узкой колонке выравнивание по ширине растягивает пробелы между словами
+   («Выписала      свои      блокирующие») — текст кажется скачущим. Здесь ровный левый край,
+   ровные пробелы и чуть больше воздуха между строками. */
+@media (max-width: 640px) {
+  .justify .tx, .tx-j, .tx-end { text-align: left; }
+  .sheet { line-height: calc(16 * var(--fpt)); word-spacing: normal; letter-spacing: normal; }
+}
+/* Телефон: подпись внизу страницы (ник — линия — «Книга года» — номер) не вылезает за лист.
+   Буквы чуть мельче, отступы короче, линия сжимается до нуля, если места мало. */
+.pf > span:not(.pf-rule) { white-space: nowrap; flex: none; }
+@media (max-width: 640px) {
+  .pf { font-size: clamp(9px, 2.6vw, 11px); }
+  .pf-rule { min-width: 0; }
+  .pf-rule, .odd .pf-rule { margin: 0 clamp(4px, 2vw, 12px); }
+  .pf-num { font-size: clamp(11px, 3.4vw, 15px); }
+  .even .pf-num { margin-left: clamp(4px, 2vw, 10px); }
+  .pf-logo { width: clamp(30px, 10vw, 44px); height: auto; aspect-ratio: 48 / 32.4; margin-bottom: -6px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; scroll-behavior: auto !important; }
