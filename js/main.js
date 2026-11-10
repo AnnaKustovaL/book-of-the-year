@@ -230,6 +230,17 @@
       box.style.setProperty("--px", (w.px || 0) + "%");
       box.style.setProperty("--py", (w.py || 0) + "%");
     };
+    // текст без картинки не влезает в круг одной строкой — круг увеличивается (класс is-long, css/style.css)
+    var markLong = function (btn) {
+      btn.classList.remove("is-long");
+      if (!btn.classList.contains("has-text") || btn.classList.contains("has-pic")) return;
+      var t = btn.querySelector(".wish-txt");
+      t.style.whiteSpace = "nowrap";
+      var long = t.scrollWidth > t.clientWidth + 1;
+      t.style.whiteSpace = "";
+      btn.classList.toggle("is-long", long);
+    };
+    window.addEventListener("resize", function () { document.querySelectorAll(".wish").forEach(markLong); });
     var paint = function (btn) {
       var w = wishes[btn.dataset.n] || {};
       var box = btn.querySelector(".wish-pic");
@@ -239,6 +250,7 @@
       btn.querySelector(".wish-txt").textContent = w.text || "";
       btn.classList.toggle("has-pic", !!w.pic);
       btn.classList.toggle("has-text", !!(w.text && w.text.trim()));
+      markLong(btn);
       btn.setAttribute("aria-label", "Желание " + btn.dataset.n + (w.text ? ": " + w.text : ": вписать желание и добавить картинку"));
     };
     var showPrev = function () {

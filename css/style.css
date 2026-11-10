@@ -974,6 +974,31 @@ em.u { font-style: italic; text-decoration: underline; text-underline-offset: 2p
   outline: none;
 }
 .rc-item:focus { border-bottom-color: var(--acc); }
+/* Телефон: 8 мест кольцом вокруг овала в сетке 3 × 3 — поля растут вниз строками
+   и сдвигают соседей, поэтому не наезжают ни друг на друга, ни на овал; 9–12 не показываем */
+@media (max-width: 640px) {
+  .rc {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr 1fr;
+    grid-template-areas: "a8 a1 a2" "a7 c a3" "a6 a5 a4";
+    column-gap: 10px; row-gap: 22px;
+    align-items: center;
+    aspect-ratio: auto;
+    margin: calc(30 * var(--pt)) 0;
+  }
+  .rc-center { position: static; transform: none; grid-area: c; justify-self: center; width: 100%; min-width: 0; height: 78px; font-size: 22px; }
+  .rc-center::placeholder { color: transparent; }   /* без подписи «Любовь к себе» */
+  .rc-item { position: static; transform: none; width: 100%; font-size: 19px; }
+  .rc-item:nth-of-type(1) { grid-area: a1; align-self: start; }
+  .rc-item:nth-of-type(2) { grid-area: a2; align-self: end; }
+  .rc-item:nth-of-type(3) { grid-area: a3; }
+  .rc-item:nth-of-type(4) { grid-area: a4; align-self: start; }
+  .rc-item:nth-of-type(5) { grid-area: a5; align-self: end; }
+  .rc-item:nth-of-type(6) { grid-area: a6; align-self: start; }
+  .rc-item:nth-of-type(7) { grid-area: a7; }
+  .rc-item:nth-of-type(8) { grid-area: a8; align-self: end; }
+  .rc-item:nth-of-type(n+9) { display: none; }
+}
 .badge-1 { width: max(30px, calc(32 * var(--pt))); height: auto; color: var(--acc); flex: none; }
 /* стр. 48: иллюстрация Древа на всю ширину текста, как в книге (362,8 × 500 pt) */
 .tree-img { display: block; width: 100%; height: auto; margin: calc(8 * var(--pt)) auto 0; }
@@ -1010,6 +1035,13 @@ em.u { font-style: italic; text-decoration: underline; text-underline-offset: 2p
 }
 .wish.has-text:not(.has-pic) { background: color-mix(in srgb, var(--paper) 90%, transparent); }
 .wish.has-text:not(.has-pic) .wish-txt { display: flex; }
+/* Телефон: заполненные круги (картинка или текст) чуть больше нарисованного кольца;
+   текст без картинки, не влезающий в одну строку, — круг ещё больше и поверх соседей */
+@media (max-width: 640px) {
+  .wish.has-pic, .wish.has-text { width: 18.5%; z-index: 1; }
+  .wish.is-long { width: 25%; z-index: 2; box-shadow: 0 2px 8px rgba(0, 0, 0, .12); }
+  .wish.is-long .wish-txt { inset: 10%; }
+}
 .wish.has-pic::after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 2.5px #1f3b1d; pointer-events: none; }   /* тёмно-зелёное кольцо, как на рисунке */
 
 /* окно желания */
