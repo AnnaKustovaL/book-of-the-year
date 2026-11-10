@@ -974,30 +974,48 @@ em.u { font-style: italic; text-decoration: underline; text-underline-offset: 2p
   outline: none;
 }
 .rc-item:focus { border-bottom-color: var(--acc); }
-/* Телефон: 8 мест кольцом вокруг овала в сетке 3 × 3 — поля растут вниз строками
-   и сдвигают соседей, поэтому не наезжают ни друг на друга, ни на овал; 9–12 не показываем */
+/* Свободное письмо вокруг круга: где человек нажал — там надпись (js/main.js, .rc-note).
+   Прежние 12 строк скрыты (остаются в разметке только для переноса старых ответов). */
+.rc { cursor: text; }
+.rc-item { display: none; }
+.rc-center {
+  /* круг крупнее — «Любовь к себе» помещается любым шрифтом для письма из настроек */
+  width: min(62%, max(196px, calc(168 * var(--pt))));
+  height: max(88px, calc(82 * var(--pt)));
+  font: var(--hand-style, normal) var(--hand-w, 400) calc(1.2 * var(--hand-pt, 15) * var(--fpt)) / 1.2 var(--hand-font, "Bad Script", cursive);   /* размер — по ширине шрифта: широкий Pacifico чуть мельче */
+  color: var(--pen, var(--ink));
+  padding: 0 6px;
+}
+.rc-note {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  transform: translate(-50%, -50%);
+  min-width: 1.5em;
+  max-width: 46%;
+  width: max-content;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font: var(--hand-style, normal) var(--hand-w, 400) max(18px, calc(15 * var(--fpt))) / 1.3 var(--hand-font, "Bad Script", cursive);
+  color: var(--pen, var(--ink));
+  caret-color: var(--acc);
+  text-align: center;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  outline: none;
+  cursor: text;
+}
+.rc-note:focus { background: color-mix(in srgb, var(--acc) 7%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--acc) 35%, transparent); }
+/* тихая подсказка под кругом: не мешает нажимать (pointer-events: none) */
+.rc-hint { position: absolute; left: 50%; top: calc(50% + max(44px, calc(41 * var(--pt))) + 14px); transform: translateX(-50%); margin: 0; width: max-content; max-width: 94%; white-space: nowrap; display: flex; align-items: center; gap: 6px; font: 400 max(11px, calc(9.5 * var(--fpt))) / 1.3 var(--font-book); letter-spacing: .02em; color: color-mix(in srgb, var(--ink) 38%, transparent); text-align: center; pointer-events: none; }
+.rc:has(.rc-note) .rc-hint { opacity: 0; }   /* как только появилась первая надпись — подсказка гаснет, чтобы не мешать */
+.rc-hint { transition: opacity .3s ease; }
+.rc-hint svg { width: 15px; height: 15px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 @media (max-width: 640px) {
-  .rc {
-    display: grid;
-    grid-template-columns: 1fr 1.1fr 1fr;
-    grid-template-areas: "a8 a1 a2" "a7 c a3" "a6 a5 a4";
-    column-gap: 10px; row-gap: 22px;
-    align-items: center;
-    aspect-ratio: auto;
-    margin: calc(30 * var(--pt)) 0;
-  }
-  .rc-center { position: static; transform: none; grid-area: c; justify-self: center; width: 100%; min-width: 0; height: 78px; font-size: 22px; }
-  .rc-center::placeholder { color: transparent; }   /* без подписи «Любовь к себе» */
-  .rc-item { position: static; transform: none; width: 100%; font-size: 19px; }
-  .rc-item:nth-of-type(1) { grid-area: a1; align-self: start; }
-  .rc-item:nth-of-type(2) { grid-area: a2; align-self: end; }
-  .rc-item:nth-of-type(3) { grid-area: a3; }
-  .rc-item:nth-of-type(4) { grid-area: a4; align-self: start; }
-  .rc-item:nth-of-type(5) { grid-area: a5; align-self: end; }
-  .rc-item:nth-of-type(6) { grid-area: a6; align-self: start; }
-  .rc-item:nth-of-type(7) { grid-area: a7; }
-  .rc-item:nth-of-type(8) { grid-area: a8; align-self: end; }
-  .rc-item:nth-of-type(n+9) { display: none; }
+  .rc-center::placeholder { color: transparent; }   /* на телефоне без подписи «Любовь к себе» */
+  .rc-center { width: max(56%, 150px); height: 78px; }   /* на телефоне круг ещё чуть меньше (но не уже 150px — слово должно поместиться) */
+  .rc-hint { white-space: normal; text-align: left; }   /* на узком экране подсказка может уйти на 2 строки, а не за край */
+  .rc-hint { top: calc(50% + 39px + 12px); }
 }
 .badge-1 { width: max(30px, calc(32 * var(--pt))); height: auto; color: var(--acc); flex: none; }
 /* стр. 48: иллюстрация Древа на всю ширину текста, как в книге (362,8 × 500 pt) */
@@ -1038,7 +1056,8 @@ em.u { font-style: italic; text-decoration: underline; text-underline-offset: 2p
 /* Телефон: заполненные круги (картинка или текст) чуть больше нарисованного кольца;
    текст без картинки, не влезающий в одну строку, — круг ещё больше и поверх соседей */
 @media (max-width: 640px) {
-  .wish.has-pic, .wish.has-text { width: 18.5%; z-index: 1; }
+  .wish.has-text { width: 18.5%; z-index: 1; }
+  .wish.has-pic { width: 21%; z-index: 1; }   /* с фото — ещё чуть больше */
   .wish.is-long { width: 25%; z-index: 2; box-shadow: 0 2px 8px rgba(0, 0, 0, .12); }
   .wish.is-long .wish-txt { inset: 10%; }
 }

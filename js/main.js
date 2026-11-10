@@ -542,6 +542,52 @@
     }
     el.addEventListener("input", function () { LS.set(key, editable ? el.innerText : el.value); });
   });
+  /* Ресурсный круг (стр. 51): человек нажимает в любом месте вокруг круга — там появляется
+     надпись, и он пишет прямо в этом месте (шрифт и цвет ручки из настроек). Надписи хранятся
+     как список {x, y, text} в процентах от блока — на любом экране стоят на тех же местах.
+     Пустая надпись исчезает, когда курсор уходит. Старые ответы из прежних 12 строк
+     переносятся в надписи на их места. */
+  document.querySelectorAll(".rc").forEach(function (rc) {
+    var sheet = rc.closest(".sheet");
+    var key = "rc-notes:" + (sheet ? sheet.id : "0");
+    var notes = LS.get(key);
+    if (!Array.isArray(notes)) {
+      notes = [];
+      rc.querySelectorAll("textarea.rc-item").forEach(function (t) {   // перенос ответов из прежних строк
+        if (t.value.trim()) notes.push({ x: parseFloat(t.style.getPropertyValue("--x")) || 50, y: parseFloat(t.style.getPropertyValue("--y")) || 50, text: t.value });
+      });
+      if (notes.length) LS.set(key, notes);
+    }
+    var save = function () { LS.set(key, notes.filter(function (n) { return n.text && n.text.trim(); })); };
+    var make = function (n) {
+      var el = document.createElement("div");
+      el.className = "rc-note";
+      el.setAttribute("contenteditable", "true");
+      el.setAttribute("role", "textbox");
+      el.setAttribute("aria-label", "Что меня наполняет");
+      el.style.setProperty("--x", n.x + "%");
+      el.style.setProperty("--y", n.y + "%");
+      el.textContent = n.text || "";
+      el.addEventListener("input", function () { n.text = el.innerText.replace(/\n$/, ""); save(); });
+      el.addEventListener("blur", function () {
+        if (!el.innerText.trim()) { notes.splice(notes.indexOf(n), 1); el.remove(); save(); }
+      });
+      rc.appendChild(el);
+      return el;
+    };
+    notes.forEach(make);
+    rc.addEventListener("click", function (e) {
+      if (e.target !== rc) return;                                  // нажали по надписи или по кругу — не создаём новую
+      var r = rc.getBoundingClientRect();
+      var n = {
+        x: Math.round(Math.min(90, Math.max(10, (e.clientX - r.left) / r.width * 100)) * 10) / 10,
+        y: Math.round(Math.min(96, Math.max(4, (e.clientY - r.top) / r.height * 100)) * 10) / 10,
+        text: ""
+      };
+      notes.push(n);
+      make(n).focus();
+    });
+  });
   /* Ресурсный круг (стр. 51): места вокруг овала растут вниз — длинный текст переносится
      на дополнительные строки под первой. */
   document.querySelectorAll("textarea.rc-item").forEach(function (t) {
