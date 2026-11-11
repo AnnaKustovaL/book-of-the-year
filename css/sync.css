@@ -195,10 +195,11 @@
 .sync-modal .sv{display:none}
 .sync-modal[data-view="register"] .sv-register,
 .sync-modal[data-view="login"] .sv-login,
-.sync-modal[data-view="code"] .sv-code{display:block;animation:sync-rise .45s ease both}
+.sync-modal[data-view="code"] .sv-code,
+.sync-modal[data-view="confirm"] .sv-confirm{display:block;animation:sync-rise .45s ease both}
 .sync-modal[data-view="success"] .sv-success{display:block;animation:sync-rise .6s ease both;padding:10px 0 4px}
 .sync-modal[data-view="success"] .sync-modal__lotus{animation:sync-bloom 1.4s ease both}
-.sync-modal__subtitle b{font-style:normal;font-weight:600;color:var(--gold-2);word-break:break-all}
+.sync-modal__subtitle b{font-style:normal;font-weight:600;color:var(--gold-2);overflow-wrap:anywhere}
 .sync-modal__login--small{margin-top:8px;font-size:16px}
 .sync-resend-timer{font:500 12px "Montserrat";color:#7d89b3;margin-left:6px}
 .sync-modal__login-link[disabled]{opacity:.45;cursor:default;border-bottom-color:transparent}
@@ -278,3 +279,7 @@
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.resume{background:rgba(15,31,61,.96)}}
 @media (max-width:420px){.resume{font-size:13px;padding-left:14px;gap:6px}.resume__go{padding:0 14px}}
 @media (prefers-reduced-motion:reduce){.resume{transition:none}}
+
+/* экран «Проверьте почту»: подсказка про «Спам» и сообщение об ошибке отправки (js/sync.js) */
+.sync-link-tip{margin:14px 0 0;text-align:center;font:500 12.5px/1.5 "Montserrat";color:#9aa6cc}
+.sync-link-error{margin:12px 0 0;text-align:center;font:500 12.5px/1.45 "Montserrat";color:var(--error);background:#ff6b6b14;border:1px solid #ff6b6b33;border-radius:10px;padding:8px 10px}

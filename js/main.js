@@ -206,15 +206,15 @@
     var saveWishes = function () { LS.set(wishKey, wishes); };
     var cur = null;
     var W = function (btn) { return wishes[btn.dataset.n] || (wishes[btn.dataset.n] = {}); };
-    // картинку уменьшаем до 720px по длинной стороне (JPEG) — чтобы поместилась в хранилище браузера
+    // картинку уменьшаем до 480px по длинной стороне (JPEG) — чтобы все 10 желаний поместились в браузере и в аккаунте (Firestore: до 1 МБ на запись)
     var shrink = function (dataUrl, done) {
       var im = new Image();
       im.onload = function () {
-        var k = Math.min(1, 720 / Math.max(im.width, im.height));
+        var k = Math.min(1, 480 / Math.max(im.width, im.height));
         var c = document.createElement("canvas");
         c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
         c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
-        try { done(c.toDataURL("image/jpeg", 0.85)); } catch (e) { done(dataUrl); }
+        try { done(c.toDataURL("image/jpeg", 0.82)); } catch (e) { done(dataUrl); }
       };
       im.onerror = function () { done(dataUrl); };
       im.src = dataUrl;
