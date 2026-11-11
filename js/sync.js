@@ -276,12 +276,4 @@
       pending = null;
     }
   };
-  /* кнопка в шапке: выйти из аккаунта (для проверки регистрации и входа) */
-  var resetBtn = document.querySelector(".sync-reset");
-  if (resetBtn) resetBtn.addEventListener("click", function () {
-    window.SyncModal.reset();
-    resetBtn.classList.remove("is-done"); void resetBtn.offsetWidth; resetBtn.classList.add("is-done");
-    resetBtn.setAttribute("aria-label", "Вы вышли из аккаунта");
-    setTimeout(function () { resetBtn.setAttribute("aria-label", "Выйти из аккаунта"); }, 1500);
-  });
 })();

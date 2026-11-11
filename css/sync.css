@@ -229,21 +229,8 @@
   100%{filter:drop-shadow(0 0 16px #f5cc6377)}
 }
 
-/* незаметная кнопка сброса регистрации в шапке справа */
-.sync-reset{
-  position:absolute;top:8px;left:50%;translate:-50% 0;z-index:3;   /* по центру шапки (translate, чтобы не мешать вращению при сбросе) */
-  width:26px;height:26px;padding:0;border:0;border-radius:50%;
-  display:grid;place-items:center;background:transparent;cursor:pointer;
-  color:currentColor;opacity:.22;transition:opacity .25s,background-color .25s;
-}
-.sync-reset svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.sync-reset:hover,.sync-reset:focus-visible{opacity:.75;background:color-mix(in srgb,currentColor 10%,transparent);outline:none}
-.sync-reset.is-done{animation:sync-reset-spin .7s ease}
-.sync-reset.is-done svg{stroke:#2fc278}
-@keyframes sync-reset-spin{from{transform:rotate(0)}to{transform:rotate(-360deg)}}
-.bar{color:var(--bar-ink,var(--c))}
-.bar.is-cover .sync-reset{color:#efcf7f}
 
+.bar{color:var(--bar-ink,var(--c))}
 @media (max-width:420px){.sync-modal__panel{padding:40px 22px 28px}}
 /* низкий экран (телефон боком): окно прокручивается внутри, без золотого свечения снизу */
 @media (max-height:720px){.sync-modal__panel{max-height:calc(100vh - 32px);overflow-y:auto}.sync-modal__panel::after{display:none}}
