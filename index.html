@@ -2539,7 +2539,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
   import { getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, collection, getDocs, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, collection, getDocs, writeBatch, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBDDKDk51yGErXArITqrgpW5doADA4gJDQ",
@@ -2564,7 +2564,7 @@
   window.Firebase = {
     app, analytics, auth, db, config: firebaseConfig,
     fb: { sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, onAuthStateChanged, signOut, updateProfile,
-          doc, getDoc, setDoc, collection, getDocs, writeBatch, serverTimestamp }
+          doc, getDoc, setDoc, collection, getDocs, writeBatch, serverTimestamp, onSnapshot }
   };
   document.dispatchEvent(new CustomEvent("firebase:ready", { detail: window.Firebase }));
 </script>
