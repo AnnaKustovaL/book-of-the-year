@@ -414,7 +414,7 @@
     // пока видео грузится, видна картина (фон обложки); видео проявляется, когда пошло
     video.addEventListener("playing", function () { intro.classList.add("video-on"); }, { once: true });
 
-    // показываем только отрезок видео: data-start … data-end (сейчас 8–29 с)
+    // показываем только отрезок видео: data-start … data-end (сейчас со 2-й секунды до конца)
     var vStart = parseFloat(video.dataset.start) || 0;
     var vEnd = parseFloat(video.dataset.end) || 0;
     var toStart = function () {
